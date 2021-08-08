@@ -42,8 +42,6 @@ namespace Selftastic_WS_Test.API
             httpClient.BaseAddress = new Uri(Url);
             httpClient.DefaultRequestHeaders.Clear();
             httpClient.DefaultRequestHeaders.ConnectionClose = true;
-            //var message = new HttpRequestMessage(HttpMethod.Get,"/user");
-            //message.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Authentification.Base64String);
             httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Authentification.Base64String);
             httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
         }
