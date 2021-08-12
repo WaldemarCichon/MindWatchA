@@ -40,5 +40,9 @@
 		
 		/>
 
-
+	<TimePicker
+		android:id="@+id/laterTimePicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+		android:visibility="gone"/>
 </RelativeLayout>

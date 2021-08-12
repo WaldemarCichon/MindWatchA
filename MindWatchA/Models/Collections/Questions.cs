@@ -10,14 +10,15 @@ namespace Selftastic_WS_Test.Models.Collections
 {
     public class Questions: GenericModelCollection<Question>
     {
-        public Questions(IEnumerable<Question> questions): base(questions)
+        public Questions(): base() { }
+        private Questions(IEnumerable<Question> questions): base(questions)
         {
 
         }
 
-        public static Questions instance;
+        private static Questions instance;
 
-        public static Questions InstanceFromWebservice = new Questions(ApiCall.Instance.GetQuestions().Result);
+        public static Questions InstanceFromWebservice => new Questions(ApiCall.Instance.GetQuestions().Result);
 
         public static Questions Instance
         {
@@ -29,7 +30,6 @@ namespace Selftastic_WS_Test.Models.Collections
                 }
 
                 instance = CreateInstance<Questions>();
-                instance.Persist();
                 return instance;
             }
         }

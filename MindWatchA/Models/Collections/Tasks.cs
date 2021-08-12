@@ -10,11 +10,12 @@ namespace Selftastic_WS_Test.Models.Collections
 {
     public class Tasks: GenericModelCollection<Task>
     {
+        public Tasks(): base() { }
         private Tasks(IEnumerable<Task> tasks) : base(tasks) { }
 
-        public static Tasks instance;
+        private static Tasks instance;
 
-        public static Tasks InstanceFromWebservice = new Tasks(ApiCall.Instance.GetTasks().Result);
+        public static Tasks InstanceFromWebservice => new Tasks(ApiCall.Instance.GetTasks().Result);
 
         public static Tasks Instance
         {
@@ -26,7 +27,6 @@ namespace Selftastic_WS_Test.Models.Collections
                 }
 
                 instance = CreateInstance<Tasks>();
-                instance.Persist();
                 return instance;
             }
         }

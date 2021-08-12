@@ -16,6 +16,7 @@ namespace MindWidgetA.StateMachine
         ChooseLaterPressed,
         WaitTimeElapsed,
         ChooseLaterEnded,
-        BackButtonPressed
+        BackButtonPressed,
+        ChoosePressed
     }
 }

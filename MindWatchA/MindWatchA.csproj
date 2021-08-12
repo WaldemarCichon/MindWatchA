@@ -70,10 +70,6 @@
     <Compile Include="StateMachine\TimeConstants.cs" />
     <Compile Include="StateMachine\Transition.cs" />
     <Compile Include="StateMachine\Events.cs" />
-    <Compile Include="Texts\Affirmations.cs" />
-    <Compile Include="Texts\Questions.cs" />
-    <Compile Include="Texts\Tasks.cs" />
-    <Compile Include="Texts\Texts.cs" />
     <Compile Include="Tooling\Statistics.cs" />
     <Compile Include="StateMachine\AbstractUI.cs" />
     <Compile Include="StateMachine\ButtonProxy.cs" />
@@ -100,6 +96,8 @@
     <Compile Include="Models\Single\User.cs" />
     <Compile Include="Enums\AnswerKind.cs" />
     <Compile Include="Repository\PersistableRepository.cs" />
+    <Compile Include="StateMachine\TimePickerProxy.cs" />
+    <Compile Include="Models\Single\LoginData.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -224,11 +222,14 @@
       <SubType></SubType>
       <Generator></Generator>
     </AndroidResource>
+    <AndroidResource Include="Resources\xml\network_security_config.xml">
+      <SubType></SubType>
+      <Generator></Generator>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\drawable\" />
     <Folder Include="StateMachine\" />
-    <Folder Include="Texts\" />
     <Folder Include="Tooling\" />
     <Folder Include="StateMachine\RemoteComponents\" />
     <Folder Include="StateMachine\RemoteComponents\RemoteViewsListView\" />
@@ -238,14 +239,12 @@
     <Folder Include="Models\Collections\" />
     <Folder Include="Enums\" />
     <Folder Include="Repository\" />
+    <Folder Include="Resources\xml\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Xamarin.AndroidX.AppCompat" Version="1.3.1.1" />
-    <PackageReference Include="Xamarin.Google.Android.Material" Version="1.4.0.1" />
+    <PackageReference Include="Xamarin.Google.Android.Material" Version="1.4.0.2" />
     <PackageReference Include="Xamarin.Essentials" Version="1.7.0" />
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>13.0.1</Version>
-    </PackageReference>
     <PackageReference Include="System.Net.Http">
       <Version>4.3.4</Version>
     </PackageReference>

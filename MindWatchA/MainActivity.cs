@@ -8,6 +8,9 @@ using AndroidX.AppCompat.App;
 using Google.Android.Material.FloatingActionButton;
 using Google.Android.Material.Snackbar;
 using MindWidgetA.StateMachine;
+using Selftastic_WS_Test.API;
+using Android.Content;
+using System.Threading.Tasks;
 
 namespace MindWatchA
 {
@@ -25,6 +28,7 @@ namespace MindWatchA
         public Android.Widget.ImageView backButton;
         private Android.Widget.ListView mainListView;
         public Android.Widget.Button infoButton;
+        public Android.Widget.TimePicker laterTimePicker;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -81,6 +85,12 @@ namespace MindWatchA
 
             mainListView = FindViewById<Android.Widget.ListView>(Resource.Id.mainList);
             ui.MainText.Register(mainListView, this);
+
+            laterTimePicker = FindViewById<Android.Widget.TimePicker>(Resource.Id.laterTimePicker);
+            laterTimePicker.SetIs24HourView(Java.Lang.Boolean.True);
+            ui.LaterTimePicker.Register(laterTimePicker);
+
+            // Task.Run(async() => await ApiCall.Instance.TestLogin());
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)

@@ -1,4 +1,7 @@
 ﻿using System;
+using System.IO;
+using System.Text;
+using System.Text.Json;
 using MindWidgetA.StateMachine;
 
 namespace MindWidgetA.Tooling
@@ -47,11 +50,45 @@ namespace MindWidgetA.Tooling
             }
         }
 
+        private static Statistics instance;
+
+        public static Statistics Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    string path = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments), "statistics.json");
+                    if (File.Exists(path))
+                    {
+                        using FileStream stream = File.OpenRead(path);
+                        var bytes = new byte[stream.Length];
+                        stream.Read(bytes);
+                        var content = Encoding.ASCII.GetString(bytes);
+                        instance = JsonSerializer.Deserialize<Statistics>(content);
+                    }
+                    else
+                    {
+                        instance = new Statistics();
+                    }
+                }
+                return instance;
+            }
+        }
+
         public Statistics()
         {
             TaskCounter = new YesNoCounter();
             QuestionCounter = new YesNoCounter();
             GoodBad = new GoodBadCounter();
+        }
+
+        public void Persist()
+        {
+            string path = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments), "statistics.json");
+            using FileStream fileStream = File.Create(path);
+            var serialized = JsonSerializer.Serialize(this);
+            fileStream.Write(Encoding.ASCII.GetBytes(serialized));
         }
 
         public void IncrementTask(bool which)

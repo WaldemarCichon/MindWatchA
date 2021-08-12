@@ -24,6 +24,8 @@ namespace MindWidgetA.StateMachine
 
         public ImageViewProxy Background { get; }
 
+        public TimePickerProxy LaterTimePicker { get; }
+
         private RemoteImageView backgroundImage;
         private RemoteTextView mainText;
         private RemoteButton happyButton;
@@ -48,6 +50,7 @@ namespace MindWidgetA.StateMachine
             NoButton = new ButtonProxy(stateMachine, Events.NoButtonPressed);
             MainText = new TextViewProxy();
             Background = new ImageViewProxy();
+            LaterTimePicker = new TimePickerProxy(stateMachine);
 
             backgroundImage = new RemoteImageView(Resource.Id.backgroundImage);
             mainText = new RemoteTextView(Resource.Id.mainText);

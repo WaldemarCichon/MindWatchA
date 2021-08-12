@@ -10,11 +10,12 @@ namespace Selftastic_WS_Test.Models.Collections
 {
     public class Affirmations: GenericModelCollection<Affirmation>
     {
-        public Affirmations(IEnumerable<Affirmation> affirmations): base(affirmations) { }
+        public Affirmations() : base() { }
+        private Affirmations(IEnumerable<Affirmation> affirmations): base(affirmations) { }
 
-        public static Affirmations instance;
+        private static Affirmations instance;
 
-        public static Affirmations InstanceFromWebservice = new Affirmations(ApiCall.Instance.GetAffirmations().Result);
+        public static Affirmations InstanceFromWebservice => new Affirmations(ApiCall.Instance.GetAffirmations().Result);
 
         public static Affirmations Instance
         {
@@ -26,7 +27,6 @@ namespace Selftastic_WS_Test.Models.Collections
                 }
 
                 instance = CreateInstance<Affirmations>();
-                instance.Persist();
                 return instance;
             }
         }

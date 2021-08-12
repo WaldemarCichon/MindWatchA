@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using MindWatchA.Models.Single;
 using Selftastic_WS_Test.Enums;
 using Selftastic_WS_Test.Models;
 using Selftastic_WS_Test.Models.Single;
@@ -16,11 +16,15 @@ namespace Selftastic_WS_Test.API
 {
     public class ApiCall
     {
+        private const String AdminName = "admin";
+        private const String AdminPassword = "f9d77e3d3549484485985548758a4a0c";
         private const String UserName = "user";
         private const String Password = "e1132bc38c29465dac7a285a57727555";
-        public const String UserId1 = "40bbc293-6b9b-4673-91b2-9a324794c7a3";
-        public const String UserId2 = "a93c96ae-5394-4a14-b803-1320e4bf1078";
-        private const string ApiUrl = "https://api.selftastic.de/";
+        public const String UserId = "a92585ae-8666-450a-89e9-2ab9edc15ee6";
+        public const String UserEmail = "w@a";
+        public const String UserPassword = "b";
+        public const String UserId1 = "21774f13-be68-4cda-a33c-b2935216681c";
+        private const string ApiUrl = "https://api.selftastic.de";
 
 
         private static ApiCall instance;
@@ -60,27 +64,47 @@ namespace Selftastic_WS_Test.API
 
 
         public async Task<IEnumerable<Affirmation>> GetAffirmations() { 
-            Console.WriteLine(Url + "//affirmation");
-            var answer = await httpClient.GetAsync("/affirmation");
-            var content = answer.Content;
-            var affirmations = await content.ReadAsStringAsync();
-            var deserialized = JsonConvert.DeserializeObject<IEnumerable<Affirmation>>(affirmations);
-            return deserialized;
+            Console.WriteLine(Url + "/affirmation");
+            var answer = await httpClient.GetFromJsonAsync<IEnumerable<Affirmation>>("/affirmation").ConfigureAwait(false);
+            return answer;
         }
 
         public async Task<IEnumerable<Question>> GetQuestions()
         {
-            var answer = await httpClient.GetAsync("/question");
-            var content = answer.Content;
-            var questions = await content.ReadAsStringAsync();
-            var deserialized = JsonConvert.DeserializeObject<IEnumerable<Question>>(questions);
-            return deserialized;
+            var answer = await httpClient.GetFromJsonAsync<IEnumerable<Question>>("/question").ConfigureAwait(false);
+            return answer;
         }
 
         public async Task<IEnumerable<Models.Single.Task>> GetTasks()
         {
-            var tasks = await httpClient.GetFromJsonAsync<IEnumerable<Models.Single.Task>>("/task");
+            var tasks = await httpClient.GetFromJsonAsync<IEnumerable<Models.Single.Task>>("/task").ConfigureAwait(false);
             return tasks;
+        }
+
+        internal async Task SendAnswer<T>(T position, AnswerKind answerKind) where T : GenericAPIModel
+        {
+            var answer = new Answer()
+            {
+                answerValue = answerKind,
+                timestamp = DateTime.Now,
+                user = UserId
+            };
+            var typeName = typeof(T).Name.ToLower();
+            var answerResult = await httpClient.PostAsJsonAsync("/" + typeName + "/" + position.Id + "/answer", answer).ConfigureAwait(false);
+            Console.WriteLine("Sent: " + typeName + " - " + answerKind);
+            answerResult.EnsureSuccessStatusCode();
+        }
+
+        public async Task PostAffirmationAnswer(string id, AnswerKind answerKind)
+        {
+            var answer = new Answer()
+            {
+                answerValue = answerKind,
+                timestamp = DateTime.Now,
+                user = UserId1
+            };
+            var answerResult = await httpClient.PostAsJsonAsync("/affirmation/" + id + "/answer", answer).ConfigureAwait(false);
+            answerResult.EnsureSuccessStatusCode();
         }
 
         public async Task PostTaskAnswer(string id, AnswerKind answerKind)
@@ -91,7 +115,7 @@ namespace Selftastic_WS_Test.API
                 timestamp = DateTime.Now,
                 user = UserId1
             };
-            var answerResult = await httpClient.PostAsJsonAsync("/task/"+id+"/answer", answer);
+            var answerResult = await httpClient.PostAsJsonAsync("/task/"+id+"/answer", answer).ConfigureAwait(false);
             answerResult.EnsureSuccessStatusCode();
         }
 
@@ -103,8 +127,22 @@ namespace Selftastic_WS_Test.API
                 timestamp = DateTime.Now,
                 user = UserId1
             };
-            var answerResult = await httpClient.PostAsJsonAsync("/question/" + id + "/answer", answer);
+            var answerResult = await httpClient.PostAsJsonAsync("/question/" + id + "/answer", answer).ConfigureAwait(false);
             answerResult.EnsureSuccessStatusCode();
+        }
+
+        public async Task<String> Login(String email, String password)
+        {
+            var loginData = new LoginData(email, password);
+            var answerResult = await httpClient.PostAsJsonAsync("/user/login", loginData).ConfigureAwait(false);
+            answerResult.EnsureSuccessStatusCode();
+            var result = await answerResult.Content.ReadAsStringAsync();
+            return result;
+        }
+
+        public async Task TestLogin()
+        {
+            await Login(UserEmail, UserPassword);
         }
     }
 }
