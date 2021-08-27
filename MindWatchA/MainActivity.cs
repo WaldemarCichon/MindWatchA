@@ -11,36 +11,59 @@ using MindWidgetA.StateMachine;
 using Selftastic_WS_Test.API;
 using Android.Content;
 using System.Threading.Tasks;
+using Selftastic_WS_Test.Models.Single;
 
 namespace MindWatchA
 {
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = true)]
     public class MainActivity : AppCompatActivity
     {
+        public static MainActivity Instance { get; private set; }
+        public static MainActivity PreviousInstance { get; private set; }
+
+        private User user;
+
         public FloatingActionButton happyButton;
         public FloatingActionButton neutralButton;
         public FloatingActionButton sadButton;
         public FloatingActionButton okButton;
         public FloatingActionButton laterButton;
         public FloatingActionButton noButton;
+        public FloatingActionButton syncButton;
+        public FloatingActionButton logoutButton;
         public Android.Widget.ImageView backgroundImageView;
         public Android.Widget.Button confirmButton;
         public Android.Widget.ImageView backButton;
         private Android.Widget.ListView mainListView;
-        public Android.Widget.Button infoButton;
+        public FloatingActionButton infoButton;
         public Android.Widget.TimePicker laterTimePicker;
+
+
+        [Obsolete]
+        private void removeStatusBar()
+        {
+            View decorView = Window.DecorView;
+            var uiOptions = SystemUiFlags.Fullscreen | SystemUiFlags.HideNavigation | SystemUiFlags.Immersive;
+            decorView.SystemUiVisibility = (StatusBarVisibility)uiOptions;
+        }
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+            Instance = this;
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
+            user = User.Instance;
+            if (user.user_id == null)
+            {
+                PreviousInstance = this;
+                StartActivity(typeof(LoginActivity));
+            }
+            TimeConstants.is_test = user.test_mode;
 
-            
-            View decorView = Window.DecorView;
-            var uiOptions = SystemUiFlags.Fullscreen | SystemUiFlags.HideNavigation | SystemUiFlags.Immersive;
-            decorView.SystemUiVisibility = (StatusBarVisibility)  uiOptions;
-            
+#pragma warning disable CS0612 // Type or member is obsolete
+            removeStatusBar();
+#pragma warning restore CS0612 // Type or member is obsolete
 
             /*
             var controller = Window.InsetsController;
@@ -62,7 +85,7 @@ namespace MindWatchA
             sadButton = FindViewById<FloatingActionButton>(Resource.Id.sad);
             ui.SadButton.Register(sadButton);
 
-            infoButton = FindViewById<Android.Widget.Button>(Resource.Id.info);
+            infoButton = FindViewById<FloatingActionButton>(Resource.Id.info);
             ui.InfoButton.Register(infoButton);
 
             okButton = FindViewById<FloatingActionButton>(Resource.Id.ok);
@@ -89,6 +112,14 @@ namespace MindWatchA
             laterTimePicker = FindViewById<Android.Widget.TimePicker>(Resource.Id.laterTimePicker);
             laterTimePicker.SetIs24HourView(Java.Lang.Boolean.True);
             ui.LaterTimePicker.Register(laterTimePicker);
+
+            syncButton = FindViewById<FloatingActionButton>(Resource.Id.sync);
+            ui.SyncButton.Register(syncButton);
+
+            logoutButton = FindViewById<FloatingActionButton>(Resource.Id.logout);
+            ui.LogoutButton.Register(logoutButton);
+
+            ui.FinishedRegistration();
 
             // Task.Run(async() => await ApiCall.Instance.TestLogin());
         }

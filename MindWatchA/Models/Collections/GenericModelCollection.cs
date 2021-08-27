@@ -16,22 +16,47 @@ namespace Selftastic_WS_Test.Models.Collections
 {
     public class GenericModelCollection <T> where T : GenericAPIModel
     {
+        private Boolean? isDifficult;
+
         public DateTime LastUpdated { get; set; }
         public List<T> positions { get; set; }
         public List<T> available { get; set; }
         Random random;
+        
         public GenericModelCollection()
         {
             this.positions = new List<T>();
-            this.available = new List<T>();
+            this.available = this.positions;
             random = new Random();
         }
 
         public GenericModelCollection(IEnumerable<T> positions)
         {
-            this.positions = positions.ToList();
-            this.available = positions.ToList();
-            random = new Random();
+            this.positions = positions.ToList().FindAll((T position) => position.Deleted == false);
+            this.available = positions.ToList().FindAll((T position) => position.Deleted == false);
+        }
+
+        public Boolean? IsDifficult
+        {
+            get {
+                return isDifficult;
+            }
+
+            // TODO probably remove the used values from available
+            set
+            {
+                if (isDifficult == value)
+                {
+                    return;
+                }
+
+                isDifficult = value;
+                available = positions.FindAll((T position) => !IsDifficult.HasValue || position.IsDifficult == IsDifficult);
+                if (available.Count == 0)
+                {
+                    available = positions.FindAll((T position) => true);
+                }
+            }
         }
 
         [JsonIgnore]
@@ -42,7 +67,11 @@ namespace Selftastic_WS_Test.Models.Collections
                 var count = available.Count;
                 if (count == 0)
                 {
-                    available.AddRange(positions);
+                    available.AddRange(positions.FindAll((T position) => !IsDifficult.HasValue || position.IsDifficult == IsDifficult));
+                }
+                if (available.Count == 0)
+                {
+                    available = positions.FindAll((T position) => true);
                 }
                 var id = random.Next(available.Count);
                 var position = available[id];
@@ -74,7 +103,13 @@ namespace Selftastic_WS_Test.Models.Collections
             newInstance = (C)property.GetValue(null);
             newInstance.Persist();
             return newInstance;
-        } 
+        }
+
+        public void Synchronize<C>() where C: GenericModelCollection<T>
+        {
+            var properties = typeof(C).GetProperties();
+            var property = typeof(C).GetProperty("ToSynchronizeFromWebservice");
+        }
 
         public void Persist()
         {

@@ -19,6 +19,8 @@ namespace MindWidgetA.StateMachine
         public ButtonProxy OkButton { get; }
         public ButtonProxy LaterButton { get; }
         public ButtonProxy NoButton { get; }
+        public ButtonProxy LogoutButton { get; }
+        public ButtonProxy SyncButton { get; }
 
         public TextViewProxy MainText { get; }
 
@@ -51,6 +53,8 @@ namespace MindWidgetA.StateMachine
             MainText = new TextViewProxy();
             Background = new ImageViewProxy();
             LaterTimePicker = new TimePickerProxy(stateMachine);
+            SyncButton = new ButtonProxy(stateMachine, Events.SyncButtonPressed);
+            LogoutButton = new ButtonProxy(stateMachine, Events.LogoutButtonPressed);
 
             backgroundImage = new RemoteImageView(Resource.Id.backgroundImage);
             mainText = new RemoteTextView(Resource.Id.mainText);
@@ -83,6 +87,11 @@ namespace MindWidgetA.StateMachine
             BackButton.Register(backButton);
             Background.Register(backgroundImage);
             MainText.Register(mainText);
+        }
+
+        internal void FinishedRegistration()
+        {
+            stateMachine.Recall();
         }
     }
 }

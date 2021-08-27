@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+	android:background="@drawable/gemuetszustand"
+    >
+	<TextView
+		android:text="Login"
+		android:textAppearance="?android:attr/textAppearanceLarge"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:minWidth="25px"
+		android:minHeight="25px"
+		android:id="@+id/Title"
+		android:layout_gravity="center_horizontal"
+		android:layout_marginBottom="70px"
+		android:layout_marginTop="20px"/>
+	<TextView
+		android:text="Mail-Adresse"
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center"
+		android:id="@+id/mailAddressLabel" />
+	<EditText
+		android:inputType="textEmailAddress"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/mailAddressEditText" />
+	<TextView
+		android:text="Passwort"
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center"
+		android:id="@+id/passwordLabel" />
+	<EditText
+		android:inputType="textVisiblePassword"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/passwordEditText" />
+	<CheckBox
+		android:id="@+id/testModeCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+		android:layout_gravity="center_horizontal"
+		android:text="Test-Modus"
+		android:layout_marginTop="50px"
+		android:checked="true"/>
+	<Button
+		android:text="Login"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:id="@+id/loginButton"
+		android:layout_marginTop="70px"
+		android:layout_gravity="center_horizontal"/>
+</LinearLayout>

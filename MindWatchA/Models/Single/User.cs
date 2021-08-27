@@ -18,8 +18,9 @@ namespace Selftastic_WS_Test.Models.Single
         public string password { get; set; }
         public DateTime registered_on { get; set; }
         public DateTime updated_on { get; set; }
+        public Boolean test_mode { get; set; } = true;
 
-        private User()
+        public User()
         {
 
         }

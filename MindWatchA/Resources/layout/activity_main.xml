@@ -95,13 +95,32 @@
 		app:backgroundTint="@android:color/holo_red_light"
 		android:visibility="gone"
 	/>
-	<Button
+	<com.google.android.material.floatingactionbutton.FloatingActionButton
 		android:id="@+id/info"
 		android:text="Info"
-		android:layout_width="70px"
-		android:layout_height="30px"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
 		android:layout_margin="5px"
 		android:layout_gravity="bottom|center"
+		android:src="@android:drawable/ic_dialog_info"
+		android:visibility="gone"
+        />
+	<com.google.android.material.floatingactionbutton.FloatingActionButton
+		android:id="@+id/sync"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_margin="5px"
+		android:layout_gravity="bottom|left"
+		android:src="@drawable/outline_sync_24"
+		android:visibility="gone"
+        />
+	<com.google.android.material.floatingactionbutton.FloatingActionButton
+		android:id="@+id/logout"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_margin="5px"
+		android:layout_gravity="bottom|right"
+		android:src="@drawable/outline_logout_24"
 		android:visibility="gone"
         />
 	<ImageView

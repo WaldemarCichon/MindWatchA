@@ -81,13 +81,28 @@ namespace Selftastic_WS_Test.API
             return tasks;
         }
 
+
+        internal async Task SendAnswer<T>(T position, MoodAnswerKind answerKind) where T : GenericAPIModel
+        {
+            var answer = new MoodAnswer()
+            {
+                answerValue = answerKind,
+                timestamp = DateTime.Now,
+                user = User.Instance.user_id
+            };
+            var typeName = typeof(T).Name.ToLower();
+            var answerResult = await httpClient.PostAsJsonAsync("/" + typeName + "/" + position.Id + "/answer", answer).ConfigureAwait(false);
+            Console.WriteLine("Sent: " + typeName + " - " + answerKind);
+            answerResult.EnsureSuccessStatusCode();
+        }
+
         internal async Task SendAnswer<T>(T position, AnswerKind answerKind) where T : GenericAPIModel
         {
             var answer = new Answer()
             {
                 answerValue = answerKind,
                 timestamp = DateTime.Now,
-                user = UserId
+                user = User.Instance.user_id
             };
             var typeName = typeof(T).Name.ToLower();
             var answerResult = await httpClient.PostAsJsonAsync("/" + typeName + "/" + position.Id + "/answer", answer).ConfigureAwait(false);
@@ -101,7 +116,7 @@ namespace Selftastic_WS_Test.API
             {
                 answerValue = answerKind,
                 timestamp = DateTime.Now,
-                user = UserId1
+                user = User.Instance.user_id
             };
             var answerResult = await httpClient.PostAsJsonAsync("/affirmation/" + id + "/answer", answer).ConfigureAwait(false);
             answerResult.EnsureSuccessStatusCode();
@@ -113,7 +128,7 @@ namespace Selftastic_WS_Test.API
             {
                 answerValue = answerKind,
                 timestamp = DateTime.Now,
-                user = UserId1
+                user = User.Instance.user_id
             };
             var answerResult = await httpClient.PostAsJsonAsync("/task/"+id+"/answer", answer).ConfigureAwait(false);
             answerResult.EnsureSuccessStatusCode();
@@ -125,7 +140,7 @@ namespace Selftastic_WS_Test.API
             {
                 answerValue = answerKind,
                 timestamp = DateTime.Now,
-                user = UserId1
+                user = User.Instance.user_id
             };
             var answerResult = await httpClient.PostAsJsonAsync("/question/" + id + "/answer", answer).ConfigureAwait(false);
             answerResult.EnsureSuccessStatusCode();
@@ -135,6 +150,10 @@ namespace Selftastic_WS_Test.API
         {
             var loginData = new LoginData(email, password);
             var answerResult = await httpClient.PostAsJsonAsync("/user/login", loginData).ConfigureAwait(false);
+            if (answerResult.StatusCode == System.Net.HttpStatusCode.InternalServerError || answerResult.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return "";
+            }
             answerResult.EnsureSuccessStatusCode();
             var result = await answerResult.Content.ReadAsStringAsync();
             return result;
