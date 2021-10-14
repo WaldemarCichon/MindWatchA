@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using Android.App;
+using Android.Appwidget;
 using Android.Content;
 using Android.Transitions;
 using Android.Views;
 using Android.Widget;
 using MindWatchA;
 using MindWidgetA.StateMachine.RemoteComponents;
+using MindWidgetA.UI;
 
 namespace MindWidgetA.StateMachine
 {
@@ -15,7 +18,7 @@ namespace MindWidgetA.StateMachine
         private ListView listView;
         private string _text;
         private ViewStates _visibility;
-        private RemoteTextView remoteTextView;
+        public  RemoteTextView remoteTextView;
         private List<String> listViewText;
 
         public TextViewProxy()
@@ -54,13 +57,28 @@ namespace MindWidgetA.StateMachine
                 if (textView != null)
                 {
                     textView.Text = value;
+                    Console.WriteLine("Setting textView text to " +value);
                 }
                 if (remoteTextView != null)
                 {
-                    remoteTextView.Text = value;
+                    Console.WriteLine("Old Value" + remoteTextView.Text);
+                    Console.WriteLine("Setting remote text to " + value);
+                 
+                    Xamarin.Essentials.MainThread.BeginInvokeOnMainThread(() => remoteTextView.Text = value);
+                    Console.WriteLine("CurrentValue" + remoteTextView.Text);
+                    var remoteViews = remoteTextView.RemoteViews;
+                    var context = Application.Context;
+                    // var remoteViews = new RemoteViews(context.PackageName, Resource.Layout.widget_main);
+                    remoteViews.SetTextViewText(Resource.Id.mainText, value);
+                    var appWidgetManager = AppWidgetManager.GetInstance(context);
+                    ComponentName widget = new ComponentName(context, Java.Lang.Class.FromType(typeof(MainWidget)));
+                    appWidgetManager.UpdateAppWidget(widget, remoteViews);
+                    Console.WriteLine("Text set or not");
+
                 }
                 if (listView != null)
                 {
+                    Console.WriteLine("Setting listview text to " + value);
                     listViewText[0] = value;
 
                     if (listView.Adapter != null) {
@@ -89,7 +107,7 @@ namespace MindWidgetA.StateMachine
                 }
                 if (remoteTextView != null)
                 {
-                    remoteTextView.Visiblity = _visibility;
+                    remoteTextView.Visiblity = _visibility;  
                 }
                 if (listView != null)
                 {

@@ -35,6 +35,7 @@
 		android:background="@android:color/holo_green_dark"
 		android:backgroundTintMode="src_over"
 		app:backgroundTint="@android:color/holo_orange_light"
+		app:fabCustomSize="75px"
         />
 	<com.google.android.material.floatingactionbutton.FloatingActionButton
 		android:id="@+id/happy"
@@ -46,7 +47,8 @@
 		android:background="@android:color/holo_green_dark"
 		android:backgroundTintMode="src_over"
 		app:backgroundTint="@android:color/holo_green_light"
-        />
+		app:fabCustomSize="75px"
+		/>
 	<com.google.android.material.floatingactionbutton.FloatingActionButton
 		android:id="@+id/sad"
 		android:layout_width="wrap_content"
@@ -57,6 +59,7 @@
 		android:background="@android:color/holo_green_dark"
 		android:backgroundTintMode="src_over"
 		app:backgroundTint="@android:color/holo_red_light"
+		app:fabCustomSize="75px"
         />
 
 	<com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -70,6 +73,7 @@
 		android:backgroundTintMode="src_over"
 		app:backgroundTint="@android:color/holo_orange_light"
 		android:visibility="gone"
+		app:fabCustomSize="75px"
         />
 	<com.google.android.material.floatingactionbutton.FloatingActionButton
 		android:id="@+id/ok"
@@ -82,6 +86,7 @@
 		android:backgroundTintMode="src_over"
 		app:backgroundTint="@android:color/holo_green_light"
 		android:visibility="gone"
+		app:fabCustomSize="75px"
         />
 	<com.google.android.material.floatingactionbutton.FloatingActionButton
 		android:id="@+id/no"
@@ -94,6 +99,7 @@
 		android:backgroundTintMode="src_over"
 		app:backgroundTint="@android:color/holo_red_light"
 		android:visibility="gone"
+		app:fabCustomSize="75px"
 	/>
 	<com.google.android.material.floatingactionbutton.FloatingActionButton
 		android:id="@+id/info"
@@ -104,6 +110,7 @@
 		android:layout_gravity="bottom|center"
 		android:src="@android:drawable/ic_dialog_info"
 		android:visibility="gone"
+		app:fabCustomSize="75px"
         />
 	<com.google.android.material.floatingactionbutton.FloatingActionButton
 		android:id="@+id/sync"
@@ -113,6 +120,7 @@
 		android:layout_gravity="bottom|left"
 		android:src="@drawable/outline_sync_24"
 		android:visibility="gone"
+		app:fabCustomSize="75px"
         />
 	<com.google.android.material.floatingactionbutton.FloatingActionButton
 		android:id="@+id/logout"
@@ -122,6 +130,7 @@
 		android:layout_gravity="bottom|right"
 		android:src="@drawable/outline_logout_24"
 		android:visibility="gone"
+		app:fabCustomSize="75px"
         />
 	<ImageView
 		android:id="@+id/back"

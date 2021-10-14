@@ -6,21 +6,22 @@
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
-	android:layout_height="match_parent">
+	android:layout_height="match_parent"
+	
+	>
+
 
 
 	<include
 		android:id="@+id/main_include"
 		layout="@layout/content_main"
-/>
-
-
+	/>
 	<ImageView
 		android:id="@+id/happy_widget"
 		android:contentDescription="description"
 		android:layout_width="wrap_content"
 		android:layout_height="128px"
-		android:src="@drawable/happy_c"
+		android:src="@drawable/happy1"
 		android:clickable="true"
 		android:layout_alignParentBottom="true"
 		android:layout_alignParentStart="true"
@@ -32,7 +33,7 @@
 		android:contentDescription="description"
 		android:layout_width="wrap_content"
 		android:layout_height="128px"
-		android:src="@drawable/neutral_c"
+		android:src="@drawable/neutral"
 		android:clickable="true"
 		android:layout_alignParentBottom="true"
 		android:layout_centerHorizontal="true"
@@ -44,7 +45,7 @@
 		android:contentDescription="description"
 		android:layout_width="wrap_content"
 		android:layout_height="128px"
-		android:src="@drawable/sad_c"
+		android:src="@drawable/sad"
 		android:clickable="true"
 		android:layout_alignParentBottom="true"
 		android:layout_alignParentEnd="true"
@@ -90,12 +91,14 @@
 		android:layout_marginBottom="20px"
 		android:visibility="gone"
 		/>
-	<Button
+	<ImageView
 		android:id="@+id/info_widget"
 		android:text="Info"
+		android:contentDescription="Info"
 		android:layout_width="200px"
 		android:layout_height="100px"
 		android:layout_margin="50px"
+		android:src="@android:drawable/ic_dialog_info"
 		android:layout_centerInParent="true"
 		android:layout_alignParentBottom="true"
 		android:visibility="gone"

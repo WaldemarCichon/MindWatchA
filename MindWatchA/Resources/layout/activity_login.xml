@@ -14,7 +14,7 @@
 		android:minHeight="25px"
 		android:id="@+id/Title"
 		android:layout_gravity="center_horizontal"
-		android:layout_marginBottom="70px"
+		android:layout_marginBottom="30px"
 		android:layout_marginTop="20px"/>
 	<TextView
 		android:text="Mail-Adresse"
@@ -46,13 +46,13 @@
         android:layout_height="wrap_content"
 		android:layout_gravity="center_horizontal"
 		android:text="Test-Modus"
-		android:layout_marginTop="50px"
+		android:layout_marginTop="30px"
 		android:checked="true"/>
 	<Button
 		android:text="Login"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:id="@+id/loginButton"
-		android:layout_marginTop="70px"
+		android:layout_marginTop="30px"
 		android:layout_gravity="center_horizontal"/>
 </LinearLayout>

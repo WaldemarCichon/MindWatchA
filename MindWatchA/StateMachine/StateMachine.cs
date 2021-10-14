@@ -12,11 +12,33 @@ using Selftastic_WS_Test.Enums;
 using System.IO;
 using System.Text.Json;
 using System.Text;
+using Android.OS;
+using Java.Interop;
+using Android.Appwidget;
+using MindWidgetA.UI;
+using Android.Content;
+using Android.Widget;
 
 namespace MindWidgetA.StateMachine
 {
+    
+
     public class StateMachine
     {
+        public class OnAlarmListenerImpl : Java.Lang.Object, AlarmManager.IOnAlarmListener
+        {
+            public OnAlarmListenerImpl(): base()
+            {
+
+            }
+
+            public void OnAlarm()
+            {
+                Instance.onAlarm();
+            }
+        }
+
+        private static StateMachine Instance { get; set; }
         private static Timer timer;
         private static States LastQuestionTaskState = States.TASK;
         private const int DoNotChangeTimer = -1;
@@ -70,9 +92,12 @@ namespace MindWidgetA.StateMachine
             }
         }
 
-        public static States CurrentState { get; set; }
-        public static StateMap StateMap;
+        public static Context Context = Application.Context;
+
+        public  static States CurrentState { get; set; }
+        public  static StateMap StateMap;
         private static AbstractUI UI { get; set; }
+        public  static RemoteViews RemoteViews { get; set; }
         private static Statistics statistics;
         private static int lastAffirmationDuration;
         private static bool laterChosen = false;
@@ -80,6 +105,8 @@ namespace MindWidgetA.StateMachine
         private static DateTime nextGreetingAt;
         private static DateTime timerStopsAt;
         private static Timer greetingsTimer;
+        private static Vibrator vibrator;
+        private static AlarmManager alarmManager;
 
         private StateTransitions GreetingsStateTransitions = new StateTransitions(States.GREETINGS).
             Add(new Transition(States.AFFIRMATION, Events.HappyButtonPressed, () => { return true; }, () => { statistics.IncrementMindState(Events.HappyButtonPressed); sendAnswerAsync(MoodAnswerKind.good); setAffirmationState(TimeConstants.DURATION_GOOD); })).
@@ -99,8 +126,8 @@ namespace MindWidgetA.StateMachine
             Add(new Transition(States.CHOOSE_LATER, Events.ChooseLaterPressed, () => { return true; }, setChooseLaterState));
         private StateTransitions InfoStateTransisions = new StateTransitions(States.INFO).
             Add(new Transition(States.AFFIRMATION, Events.BackButtonPressed, () => { return true; }, () => { setAffirmationState(DoNotChangeTimer); })).
-            Add(new Transition(States.QUESTION, Events.TimeEllapsed, () => LastQuestionTaskState == States.TASK ^ laterChosen, () => { setQuestionState(); })).
-            Add(new Transition(States.TASK, Events.TimeEllapsed, () => LastQuestionTaskState == States.QUESTION ^ laterChosen, () => { setTaskState(); })).
+            Add(new Transition(States.QUESTION, Events.TimeEllapsed, () => LastQuestionTaskState == States.TASK /* ^ laterChosen*/, () => { setQuestionState(); })).
+            Add(new Transition(States.TASK, Events.TimeEllapsed, () => LastQuestionTaskState == States.QUESTION /*^ laterChosen*/, () => { setTaskState(); })).
             Add(new Transition(States.INFO, Events.SyncButtonPressed, () => true, synchronize)).
             Add(new Transition(States.NONE, Events.LogoutButtonPressed, () => true, logout));
         private StateTransitions LaterChosenTransisions = new StateTransitions(States.CHOOSE_LATER).
@@ -110,20 +137,29 @@ namespace MindWidgetA.StateMachine
 
 
 
-        public StateMachine() { }
+        public StateMachine() { Instance = this; }
 
-        public StateMachine(AbstractUI ui)
+        public StateMachine(AbstractUI ui, RemoteViews remoteViews): this()
         {
             CurrentState = States.GREETINGS;
             statistics = new Statistics();
             createTimers();
             InitStateMap();
             UI = ui;
+            RemoteViews = remoteViews;
+            vibrator = (Vibrator) Context.GetSystemService(Android.Content.Context.VibratorService);
+            // activityManager = (ActivityManager) Context.GetSystemService(Android.Content.Context.ActivityService);
         }
 
         private bool True()
         {
             return true;
+        }
+
+        private static void vibrate()
+        {
+            
+            vibrator.Vibrate(500);
         }
 
         private void InitStateMap()
@@ -144,19 +180,37 @@ namespace MindWidgetA.StateMachine
             timer.Elapsed += (object o, ElapsedEventArgs a) => { Xamarin.Essentials.MainThread.BeginInvokeOnMainThread(() => PushEvent(Events.TimeEllapsed)); timer.Interval = 0; };
             greetingsTimer = new Timer();
             greetingsTimer.Elapsed += (object sender, ElapsedEventArgs a) => { Xamarin.Essentials.MainThread.BeginInvokeOnMainThread(() => setGreetingsState()); greetingsTimer.Interval = 0; };
+            alarmManager = (AlarmManager) Context.GetSystemService(Android.Content.Context.AlarmService);
         }
 
         private static void setTimer(int seconds)
         {
             currentGreetingsTimerDuration = seconds;
             timerStopsAt = DateTime.Now + new TimeSpan(((long)seconds) * 10000000L);
-            if (timer.Interval>0)
+            if (timer.Interval > 0)
             {
                 timer.Stop();
             }
+            /*
             timer.AutoReset = false;
             timer.Interval = seconds * 1000;
             timer.Start();
+            */
+            alarmManager.Set(AlarmType.RtcWakeup, seconds * 1000, "alarm", new OnAlarmListenerImpl(), null);
+        }
+
+        private void onAlarm()
+        {
+            PowerManager pm = (PowerManager)Context.GetSystemService(Android.Content.Context.PowerService);
+            PowerManager.WakeLock wl = pm.NewWakeLock(WakeLockFlags.ScreenDim 
+                                                 | WakeLockFlags.OnAfterRelease,
+                                                 "wakeup");
+            wl.Acquire();
+            // ... do work...
+            //show toask
+       
+            Xamarin.Essentials.MainThread.BeginInvokeOnMainThread(() => Instance.PushEvent(Events.TimeEllapsed));
+            wl.Release();
         }
 
         private static void setGreetingsTimer(int seconds)
@@ -179,7 +233,7 @@ namespace MindWidgetA.StateMachine
             t.Start();
         }
 
-        private static int chosenLaterDuration => (int)(UI.LaterTimePicker.ChosenTime - DateTime.Now).TotalSeconds;
+        // private static int chosenLaterDuration => (int)(UI.LaterTimePicker.ChosenTime - DateTime.Now).TotalSeconds;
 
         private static void setGreetingsState()
         {
@@ -193,20 +247,25 @@ namespace MindWidgetA.StateMachine
             UI.Background.SetImageResource(Resource.Drawable.gemuetszustand);
             sendAnswerAsync(Selftastic_WS_Test.Enums.MoodAnswerKind.shown);
             setGreetingsTimer(TimeConstants.SecondsToNextGreeting);
+            Console.WriteLine("SetGreetingsState finished");
         }
 
         private static void setAffirmationState(int seconds) 
         {
             if (seconds > 0)
             {
+                vibrate();
                 setTimer(seconds);
                 lastAffirmationDuration = seconds;
             } else
             {
                 if (seconds == UseChosenDuration)
                 {
+                    /*
+                    vibrate();
                     setTimer(chosenLaterDuration);
                     laterChosen = true;
+                    */
                 }
             }
 
@@ -217,7 +276,6 @@ namespace MindWidgetA.StateMachine
             UI.NoButton.Visibility = Android.Views.ViewStates.Gone;
             UI.BackButton.Visibility = Android.Views.ViewStates.Gone;
             UI.LaterButton.Visibility = Android.Views.ViewStates.Gone;
-            UI.LaterTimePicker.Visibility = Android.Views.ViewStates.Gone;
             UI.InfoButton.Visibility = Android.Views.ViewStates.Visible;
             UI.MainText.Visibility = Android.Views.ViewStates.Visible;
             UI.Background.SetImageResource(Resource.Drawable.affirmations);
@@ -227,7 +285,6 @@ namespace MindWidgetA.StateMachine
             Affirmations.Instance.SendAnswer(Selftastic_WS_Test.Enums.AnswerKind.shown);
         }
 
-
         private static void setQuestionTaskState(string random, int backgroundPicId)
         {
             UI.InfoButton.Visibility = Android.Views.ViewStates.Gone;
@@ -235,7 +292,6 @@ namespace MindWidgetA.StateMachine
             UI.NoButton.Visibility = Android.Views.ViewStates.Visible;
             UI.LaterButton.Visibility = Android.Views.ViewStates.Visible;
             UI.BackButton.Visibility = Android.Views.ViewStates.Gone;
-            UI.LaterTimePicker.Visibility = Android.Views.ViewStates.Gone;
             UI.SyncButton.Visibility = Android.Views.ViewStates.Gone;
             UI.LogoutButton.Visibility = Android.Views.ViewStates.Gone;
             // UI.backgroundImageView.SetImageResource(backgroundPicId);
@@ -245,6 +301,7 @@ namespace MindWidgetA.StateMachine
 
         private static void setQuestionState()
         {
+            vibrate();
             var question = LastQuestionTaskState == States.QUESTION ? UI.MainText.Text : Questions.Instance.NewRandom.Text;
             setQuestionTaskState(question, Resource.Drawable.questions);
             LastQuestionTaskState = States.QUESTION;
@@ -254,6 +311,7 @@ namespace MindWidgetA.StateMachine
 
         private static void setTaskState()
         {
+            vibrate();
             var task = LastQuestionTaskState == States.TASK ? UI.MainText.Text : Tasks.Instance.NewRandom.Text;
             setQuestionTaskState(task, Resource.Drawable.tasks);
             LastQuestionTaskState = States.TASK;
@@ -292,7 +350,6 @@ namespace MindWidgetA.StateMachine
             UI.OkButton.Visibility = Android.Views.ViewStates.Visible;
             UI.NoButton.Visibility = Android.Views.ViewStates.Visible;
             UI.LaterButton.Visibility = Android.Views.ViewStates.Gone;
-            UI.LaterTimePicker.Visibility = Android.Views.ViewStates.Visible;
             if (LastQuestionTaskState == States.QUESTION)
             {
                 Questions.Instance.SendAnswer(Selftastic_WS_Test.Enums.AnswerKind.later);
@@ -325,9 +382,35 @@ namespace MindWidgetA.StateMachine
         public void PushEvent(Events _event)
         {
             var newState = StateMap[CurrentState].PushEvent(_event);
+            if (newState == States.NONE)
+            {
+                Console.WriteLine("New State was NONE");
+                newState = States.GREETINGS;
+                setGreetingsState();
+            }
             if (newState != States.NONE)
             {
                 CurrentState = newState;
+                AppWidgetManager man = AppWidgetManager.GetInstance(Context);
+                ComponentName widget = new ComponentName(Context, Java.Lang.Class.FromType(typeof(MainWidget)));
+                var ids = man.GetAppWidgetIds(widget);
+                Console.WriteLine($"{ids}, {ids.Length}");
+                var updateIntent = new Intent();
+                updateIntent.SetAction(AppWidgetManager.ActionAppwidgetUpdate);
+                updateIntent.PutExtra("IDS", ids);
+                updateIntent.PutExtra("DATA", "");
+                Context.SendBroadcast(updateIntent);
+                // RemoteViews remoteViews = new RemoteViews(Context.PackageName, Resource.Layout.widget_main);
+                Console.WriteLine("Statemachine is updating remote views", RemoteViews);
+                var appWidgetManager = AppWidgetManager.GetInstance(Context.ApplicationContext);
+                if (Xamarin.Essentials.MainThread.IsMainThread)
+                {
+                    appWidgetManager.UpdateAppWidget(widget, RemoteViews);
+                }
+                else
+                {
+                    Xamarin.Essentials.MainThread.BeginInvokeOnMainThread(() => appWidgetManager.UpdateAppWidget(widget, RemoteViews));
+                }
                 this.Persist();
             }
         }
@@ -354,7 +437,7 @@ namespace MindWidgetA.StateMachine
         public void Recall()
         {
             string path = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments), "statemachine.json");
-            if (File.Exists(path))
+            if (File.Exists(path) && false)
             {
                 {
                     using FileStream fileStream = File.OpenRead(path);

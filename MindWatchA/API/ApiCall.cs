@@ -94,6 +94,7 @@ namespace Selftastic_WS_Test.API
             var answerResult = await httpClient.PostAsJsonAsync("/" + typeName + "/" + position.Id + "/answer", answer).ConfigureAwait(false);
             Console.WriteLine("Sent: " + typeName + " - " + answerKind);
             answerResult.EnsureSuccessStatusCode();
+            Console.WriteLine("Sending successfull");
         }
 
         internal async Task SendAnswer<T>(T position, AnswerKind answerKind) where T : GenericAPIModel
@@ -106,8 +107,9 @@ namespace Selftastic_WS_Test.API
             };
             var typeName = typeof(T).Name.ToLower();
             var answerResult = await httpClient.PostAsJsonAsync("/" + typeName + "/" + position.Id + "/answer", answer).ConfigureAwait(false);
-            Console.WriteLine("Sent: " + typeName + " - " + answerKind);
+            Console.WriteLine("Sent: " + typeName + " -- " + answerKind);
             answerResult.EnsureSuccessStatusCode();
+            Console.WriteLine("Sending - successfull");
         }
 
         public async Task PostAffirmationAnswer(string id, AnswerKind answerKind)

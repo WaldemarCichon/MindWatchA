@@ -10,6 +10,7 @@ namespace MindWidgetA.StateMachine
     public class AbstractUI
     {
         public static AbstractUI Instance { get; } = new AbstractUI();
+        //public static AbstractUI Instance1 { get; } = new AbstractUI();
 
         public ButtonProxy HappyButton { get; }
         public ButtonProxy NeutralButton { get; }
@@ -26,8 +27,6 @@ namespace MindWidgetA.StateMachine
 
         public ImageViewProxy Background { get; }
 
-        public TimePickerProxy LaterTimePicker { get; }
-
         private RemoteImageView backgroundImage;
         private RemoteTextView mainText;
         private RemoteButton happyButton;
@@ -41,7 +40,9 @@ namespace MindWidgetA.StateMachine
 
         private AbstractUI()
         {
-            stateMachine = new StateMachine(this);
+            Console.WriteLine("Abstract UI - in constructor");
+            stateMachine = new StateMachine(this, null);
+            Console.WriteLine("Statemachine created");
             HappyButton = new ButtonProxy(stateMachine, Events.HappyButtonPressed);
             NeutralButton = new ButtonProxy(stateMachine, Events.NeutralButtonPressed);
             SadButton = new ButtonProxy(stateMachine, Events.SadButtonPressed);
@@ -52,9 +53,10 @@ namespace MindWidgetA.StateMachine
             NoButton = new ButtonProxy(stateMachine, Events.NoButtonPressed);
             MainText = new TextViewProxy();
             Background = new ImageViewProxy();
-            LaterTimePicker = new TimePickerProxy(stateMachine);
             SyncButton = new ButtonProxy(stateMachine, Events.SyncButtonPressed);
             LogoutButton = new ButtonProxy(stateMachine, Events.LogoutButtonPressed);
+
+            Console.WriteLine("Proxies created");
 
             backgroundImage = new RemoteImageView(Resource.Id.backgroundImage);
             mainText = new RemoteTextView(Resource.Id.mainText);
@@ -65,10 +67,13 @@ namespace MindWidgetA.StateMachine
             okButton = new RemoteButton(Resource.Id.ok_widget);
             noButton = new RemoteButton(Resource.Id.no_widget);
             backButton = new RemoteButton(Resource.Id.back_widget);
+
+            Console.WriteLine("Abstract UI created");
         }
 
         internal void SetBaseData(RemoteViews remoteViews, ComponentName widget, AppWidgetManager appWidgetManager)
         {
+            StateMachine.RemoteViews = remoteViews;
             backgroundImage.SetBaseData(remoteViews, widget, appWidgetManager);
             mainText.SetBaseData(remoteViews, widget, appWidgetManager);
             happyButton.SetBaseData(remoteViews, widget, appWidgetManager);

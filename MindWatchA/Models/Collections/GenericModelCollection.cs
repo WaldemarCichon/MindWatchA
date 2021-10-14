@@ -21,7 +21,7 @@ namespace Selftastic_WS_Test.Models.Collections
         public DateTime LastUpdated { get; set; }
         public List<T> positions { get; set; }
         public List<T> available { get; set; }
-        Random random;
+        Random random = new Random();
         
         public GenericModelCollection()
         {
@@ -34,6 +34,7 @@ namespace Selftastic_WS_Test.Models.Collections
         {
             this.positions = positions.ToList().FindAll((T position) => position.Deleted == false);
             this.available = positions.ToList().FindAll((T position) => position.Deleted == false);
+            random = new Random();
         }
 
         public Boolean? IsDifficult

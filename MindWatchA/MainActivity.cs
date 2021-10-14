@@ -15,7 +15,8 @@ using Selftastic_WS_Test.Models.Single;
 
 namespace MindWatchA
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = true)]
+    // for icons https://stackoverflow.com/questions/37945767/how-to-change-application-icon-in-xamarin-forms
+    [Activity(Label = "@string/app_name", Icon="@drawable/logo", Theme = "@style/AppTheme.NoActionBar", MainLauncher = true)]
     public class MainActivity : AppCompatActivity
     {
         public static MainActivity Instance { get; private set; }
@@ -31,12 +32,12 @@ namespace MindWatchA
         public FloatingActionButton noButton;
         public FloatingActionButton syncButton;
         public FloatingActionButton logoutButton;
+        public Android.Widget.TextView mainTextView;
         public Android.Widget.ImageView backgroundImageView;
         public Android.Widget.Button confirmButton;
         public Android.Widget.ImageView backButton;
         private Android.Widget.ListView mainListView;
         public FloatingActionButton infoButton;
-        public Android.Widget.TimePicker laterTimePicker;
 
 
         [Obsolete]
@@ -108,10 +109,6 @@ namespace MindWatchA
 
             mainListView = FindViewById<Android.Widget.ListView>(Resource.Id.mainList);
             ui.MainText.Register(mainListView, this);
-
-            laterTimePicker = FindViewById<Android.Widget.TimePicker>(Resource.Id.laterTimePicker);
-            laterTimePicker.SetIs24HourView(Java.Lang.Boolean.True);
-            ui.LaterTimePicker.Register(laterTimePicker);
 
             syncButton = FindViewById<FloatingActionButton>(Resource.Id.sync);
             ui.SyncButton.Register(syncButton);
