@@ -1,24 +1,219 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:paddingLeft="10dp"
+	android:paddingRight="10dp"
     >
+	<TextView
+		android:layout_marginTop="100px"
+		android:layout_marginBottom="100px"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:text="Einstellungen"
+		android:textStyle="bold"
+		android:textSize="20dp"
+		android:textAlignment="center"
+		/>
 	<LinearLayout
 		android:orientation="horizontal"
 		android:minWidth="25px"
 		android:minHeight="25px"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:id="@+id/linearLayout1" >
+		android:id="@+id/linearLayout1">
 		<TextView
-            android:layout_width="100px"
-            android:layout_height="wrap_content"
-			android:text="Test: "/>
+			android:layout_weight="3"
+			android:layout_width="0px"
+			android:layout_height="wrap_content"
+			android:text="Nachtruhe von: "/>
 		<EditText
-            android:layout_width="match_parent"
-            android:layout_height=wrap_content"/>
+			android:layout_weight="5"
+			android:id="@+id/night_stop_from"
+			android:inputType="time"
+			android:layout_width="0px"
+			android:layout_height="wrap_content"/>
 
-    </LinearLayout>
- 
+	</LinearLayout>
+	<LinearLayout
+		android:orientation="horizontal"
+		android:minWidth="25px"
+		android:minHeight="25px"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/linearLayout2">
+		<TextView
+			android:layout_weight="3"
+			android:layout_width="0px"
+			android:layout_height="wrap_content"
+			android:text="Nachtruhe bis: "/>
+		<EditText
+			android:layout_weight="5"
+			android:id="@+id/night_stop_to"
+			android:inputType="time"
+			android:layout_width="0px"
+			android:layout_height="wrap_content"/>
+
+	</LinearLayout>
+
+	<LinearLayout
+		android:orientation="horizontal"
+		android:minWidth="25px"
+		android:minHeight="25px"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/linearLayout3">
+		<TextView
+			android:layout_weight="3"
+			android:layout_width="0px"
+			android:layout_height="wrap_content"
+			android:textAlignment="textEnd"
+			android:text="Montags: "/>
+		<CheckBox
+			android:id="@+id/checkBox_monday"
+			android:layout_weight="5"
+			android:layout_width="0px"
+			android:layout_height="wrap_content"/>
+
+	</LinearLayout>
+
+	<LinearLayout
+		android:orientation="horizontal"
+		android:minWidth="25px"
+		android:minHeight="25px"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/linearLayout4">
+		<TextView
+			android:layout_weight="3"
+			android:layout_width="0px"
+			android:layout_height="wrap_content"
+			android:textAlignment="textEnd"
+			android:text="Dienstags: "/>
+		<CheckBox
+			android:layout_weight="5"
+			android:id="@+id/checkBox_tuesday"
+			android:layout_width="0px"
+			android:layout_height="wrap_content"/>
+
+	</LinearLayout>
+
+	<LinearLayout
+		android:orientation="horizontal"
+		android:minWidth="25px"
+		android:minHeight="25px"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/linearLayout5">
+		<TextView
+			android:layout_weight="3"
+			android:layout_width="0px"
+			android:layout_height="wrap_content"
+			android:textAlignment="textEnd"
+			android:text="Mittwochs: "/>
+		<CheckBox
+			android:layout_weight="5"
+			android:id="@+id/checkBox_wednesday"
+			android:layout_width="0px"
+			android:layout_height="wrap_content"/>
+
+	</LinearLayout>
+
+	<LinearLayout
+		android:orientation="horizontal"
+		android:minWidth="25px"
+		android:minHeight="25px"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/linearLayout6">
+		<TextView
+			android:layout_weight="3"
+			android:layout_width="0px"
+			android:layout_height="wrap_content"
+			android:textAlignment="textEnd"
+			android:text="Donnerstags: "/>
+		<CheckBox
+			android:layout_weight="5"
+			android:id="@+id/checkBox_thursday"
+			android:layout_width="0px"
+			android:layout_height="wrap_content"/>
+			
+	</LinearLayout>
+
+	<LinearLayout
+		android:orientation="horizontal"
+		android:minWidth="25px"
+		android:minHeight="25px"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/linearLayout7">
+		<TextView
+			android:layout_weight="3"
+			android:layout_width="0px"
+			android:layout_height="wrap_content"
+			android:textAlignment="textEnd"
+			android:text="Freitags: "/>
+		<CheckBox
+			android:layout_weight="5"
+			android:id="@+id/checkBox_fridayday"
+			android:layout_width="0px"
+			android:layout_height="wrap_content"/>
+
+	</LinearLayout>
+
+	<LinearLayout
+		android:orientation="horizontal"
+		android:minWidth="25px"
+		android:minHeight="25px"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/linearLayout8">
+		<TextView
+			android:layout_weight="3"
+			android:layout_width="0px"
+			android:layout_height="wrap_content"
+			android:textAlignment="textEnd"
+			android:textColor="@android:color/holo_red_dark"
+			android:text="Samstags: "/>
+		<CheckBox
+			android:layout_weight="5"
+			android:buttonTint="@android:color/holo_red_dark"
+			android:id="@+id/checkBox_saturday"
+			android:layout_width="0px"
+			android:layout_height="wrap_content"/>
+
+	</LinearLayout>
+
+	<LinearLayout
+		android:orientation="horizontal"
+		android:minWidth="25px"
+		android:minHeight="25px"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/linearLayout9">
+		<TextView
+			android:layout_weight="3"
+			android:layout_width="0px"
+			android:layout_height="wrap_content"
+			android:textAlignment="textEnd"
+			android:textColor="@android:color/holo_red_dark"
+			android:text="Sonntags: "/>
+		<CheckBox
+			android:layout_weight="5"
+			android:id="@+id/checkBox_sunday"
+			android:buttonTint="@android:color/holo_red_dark"
+			android:layout_width="0px"
+			android:layout_height="wrap_content"/>
+
+	</LinearLayout>
+	<Button
+		android:layout_marginTop="20dp"
+		android:layout_gravity="center_horizontal"
+		android:id="@+id/save_button"
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:text="Speichern"
+		/>
 </LinearLayout>

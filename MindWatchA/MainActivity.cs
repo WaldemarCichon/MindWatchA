@@ -12,6 +12,9 @@ using Selftastic_WS_Test.API;
 using Android.Content;
 using System.Threading.Tasks;
 using Selftastic_WS_Test.Models.Single;
+using MindWatchA.UI.Fragments;
+using Google.Android.Material.BottomNavigation;
+using FloatingActionButton = Google.Android.Material.FloatingActionButton.FloatingActionButton;
 
 namespace MindWatchA
 {
@@ -51,72 +54,25 @@ namespace MindWatchA
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NTIwMTY3QDMxMzkyZTMzMmUzMFNUQjdXNVY5R3FJRDUrcnpZbDhaRTQxaloyMDZYMy9FL25FcE9uUDI5S2M9");
             Instance = this;
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
-            SetContentView(Resource.Layout.activity_main);
+            SetContentView(Resource.Layout.bottom_navigation);
             user = User.Instance;
             if (user.user_id == null)
             {
                 PreviousInstance = this;
                 StartActivity(typeof(LoginActivity));
             }
-            TimeConstants.is_test = user.test_mode;
+            var bottomnavigation = FindViewById<BottomNavigationView>(Resource.Id.navigation);
+            bottomnavigation.ItemSelected += (sender, args) =>  LoadFragment(((BottomNavigationView)sender).SelectedItemId);
+
+            LoadFragment(Resource.Id.navigation_statistics);
+            // bottomnavigation.Selected
 
 #pragma warning disable CS0612 // Type or member is obsolete
-            removeStatusBar();
-#pragma warning restore CS0612 // Type or member is obsolete
+            //removeStatusBar();
 
-            /*
-            var controller = Window.InsetsController;
-            controller.Hide(WindowInsets.Type.NavigationBars());
-            */
-
-            /*
-            Toolbar toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
-            SetSupportActionBar(toolbar);
-            */
-
-            var ui = AbstractUI.Instance;
-            happyButton = FindViewById<FloatingActionButton>(Resource.Id.happy);
-            ui.HappyButton.Register(happyButton);
-
-            neutralButton = FindViewById<FloatingActionButton>(Resource.Id.neutral);
-            ui.NeutralButton.Register(neutralButton);
-
-            sadButton = FindViewById<FloatingActionButton>(Resource.Id.sad);
-            ui.SadButton.Register(sadButton);
-
-            infoButton = FindViewById<FloatingActionButton>(Resource.Id.info);
-            ui.InfoButton.Register(infoButton);
-
-            okButton = FindViewById<FloatingActionButton>(Resource.Id.ok);
-            ui.OkButton.Register(okButton);
-
-            noButton = FindViewById<FloatingActionButton>(Resource.Id.no);
-            ui.NoButton.Register(noButton);
-
-            laterButton = FindViewById<FloatingActionButton>(Resource.Id.later);
-            ui.LaterButton.Register(laterButton);
-
-            backButton = FindViewById<Android.Widget.ImageView>(Resource.Id.back);
-            ui.BackButton.Register(backButton);
-
-            //mainTextView = FindViewById<Android.Widget.TextView>(Resource.Id.mainText);
-            //ui.MainText.Register(mainTextView);
-
-            backgroundImageView = FindViewById<Android.Widget.ImageView>(Resource.Id.backgroundImage);
-            ui.Background.Register(backgroundImageView);
-
-            mainListView = FindViewById<Android.Widget.ListView>(Resource.Id.mainList);
-            ui.MainText.Register(mainListView, this);
-
-            syncButton = FindViewById<FloatingActionButton>(Resource.Id.sync);
-            ui.SyncButton.Register(syncButton);
-
-            logoutButton = FindViewById<FloatingActionButton>(Resource.Id.logout);
-            ui.LogoutButton.Register(logoutButton);
-
-            ui.FinishedRegistration();
 
             // Task.Run(async() => await ApiCall.Instance.TestLogin());
         }
@@ -144,6 +100,30 @@ namespace MindWatchA
             Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+
+        void LoadFragment(int id)
+        {
+            AndroidX.Fragment.App.Fragment  fragment = null;
+            
+            switch (id)
+            {
+                case Resource.Id.navigation_statistics:
+                    fragment = StatisticFragment.Instance;
+                    break;
+                case Resource.Id.navigation_settings:
+                    fragment = SettingsFragment.Instance;
+                    break;
+
+            }
+
+            if (fragment == null) {
+                return;
+            }
+
+            SupportFragmentManager.BeginTransaction()
+                .Replace(Resource.Id.content_frame, fragment)
+                .Commit();
         }
     }
 }

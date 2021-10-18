@@ -66,19 +66,6 @@ namespace MindWidgetA.StateMachine
             }
         }
 
-        public Statistics StatisticsProxy
-        {
-            get
-            {
-                return statistics;
-            }
-
-            set
-            {
-                statistics = value;
-            }
-        }
-
         public States LastQuestionTaskStateProxy
         {
             get
@@ -98,7 +85,6 @@ namespace MindWidgetA.StateMachine
         public  static StateMap StateMap;
         private static AbstractUI UI { get; set; }
         public  static RemoteViews RemoteViews { get; set; }
-        private static Statistics statistics;
         private static int lastAffirmationDuration;
         private static bool laterChosen = false;
         private static int currentGreetingsTimerDuration;
@@ -109,9 +95,9 @@ namespace MindWidgetA.StateMachine
         private static AlarmManager alarmManager;
 
         private StateTransitions GreetingsStateTransitions = new StateTransitions(States.GREETINGS).
-            Add(new Transition(States.AFFIRMATION, Events.HappyButtonPressed, () => { return true; }, () => { statistics.IncrementMindState(Events.HappyButtonPressed); sendAnswerAsync(MoodAnswerKind.good); setAffirmationState(TimeConstants.DURATION_GOOD); })).
-            Add(new Transition(States.AFFIRMATION, Events.NeutralButtonPressed, () => { return true; }, () => { statistics.IncrementMindState(Events.NeutralButtonPressed); sendAnswerAsync(MoodAnswerKind.neutral);  setAffirmationState(TimeConstants.DURATION_MIDDLE); })).
-            Add(new Transition(States.AFFIRMATION, Events.SadButtonPressed, () => { return true; }, () => { statistics.IncrementMindState(Events.SadButtonPressed); sendAnswerAsync(MoodAnswerKind.bad); setAffirmationState(TimeConstants.DURATION_BAD); }));
+            Add(new Transition(States.AFFIRMATION, Events.HappyButtonPressed, () => { return true; }, () => { Statistics.IncrementMindState(Events.HappyButtonPressed); sendAnswerAsync(MoodAnswerKind.good); setAffirmationState(TimeConstants.DURATION_GOOD); })).
+            Add(new Transition(States.AFFIRMATION, Events.NeutralButtonPressed, () => { return true; }, () => { Statistics.IncrementMindState(Events.NeutralButtonPressed); sendAnswerAsync(MoodAnswerKind.neutral);  setAffirmationState(TimeConstants.DURATION_MIDDLE); })).
+            Add(new Transition(States.AFFIRMATION, Events.SadButtonPressed, () => { return true; }, () => { Statistics.IncrementMindState(Events.SadButtonPressed); sendAnswerAsync(MoodAnswerKind.bad); setAffirmationState(TimeConstants.DURATION_BAD); }));
         private StateTransitions AffirmationStateTransistions = new StateTransitions(States.AFFIRMATION).
             Add(new Transition(States.QUESTION, Events.TimeEllapsed, () => { return LastQuestionTaskState == States.TASK; }, () => { setQuestionState(); })).
             Add(new Transition(States.TASK, Events.TimeEllapsed, () => { return LastQuestionTaskState == States.QUESTION; }, () => { setTaskState(); })).
@@ -142,7 +128,6 @@ namespace MindWidgetA.StateMachine
         public StateMachine(AbstractUI ui, RemoteViews remoteViews): this()
         {
             CurrentState = States.GREETINGS;
-            statistics = new Statistics();
             createTimers();
             InitStateMap();
             UI = ui;
@@ -321,7 +306,7 @@ namespace MindWidgetA.StateMachine
 
         private static void setInfoState()
         {
-            UI.MainText.Text = statistics.InfoText;
+            UI.MainText.Text = Statistics.Global.InfoText;
             UI.InfoButton.Visibility = Android.Views.ViewStates.Gone;
             UI.BackButton.Visibility = Android.Views.ViewStates.Visible;
             UI.SyncButton.Visibility = Android.Views.ViewStates.Visible;
@@ -332,14 +317,14 @@ namespace MindWidgetA.StateMachine
 
         private static void setTaskAnswer(bool answer)
         {
-            statistics.IncrementTask(answer);
+            Statistics.IncrementTask(answer);
             setAffirmationState(currentGreetingsTimerDuration);
             Tasks.Instance.SendAnswer(answer ? Selftastic_WS_Test.Enums.AnswerKind.accepted : Selftastic_WS_Test.Enums.AnswerKind.declined);
         }
 
         private static void setQuestionAnswer(bool answer)
         {
-            statistics.IncrementQuestion(answer);
+            Statistics.IncrementQuestion(answer);
             setAffirmationState(currentGreetingsTimerDuration);
             Questions.Instance.SendAnswer(answer ? Selftastic_WS_Test.Enums.AnswerKind.accepted : Selftastic_WS_Test.Enums.AnswerKind.declined);
         }

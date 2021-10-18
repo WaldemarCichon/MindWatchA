@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+    https://www.simplifiedcoding.net/bottom-navigation-android-example/
+-->
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:id="@+id/activity_main"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
+	<FrameLayout
+		android:id="@+id/content_frame"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_above="@+id/navigation"/>
+	<android.support.design.widget.BottomNavigationView
+		android:id="@+id/navigation"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:background="@android:color/holo_blue_bright"
+		app:itemIconTint="@android:color/holo_green_dark"
+		app:itemTextColor="@android:color/holo_green_dark"
+		android:layout_gravity="start"
+		android:layout_alignParentBottom="true"
+		app:elevation="16dp"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintLeft_toLeftOf="parent"
+		app:layout_constraintRight_toRightOf="parent"
+		app:menu="@menu/navigation" />
+</RelativeLayout>
+
+<!--app:itemIconTint="@color/colorNavIcon"
+        app:itemTextColor="@color/colorNavText" -->

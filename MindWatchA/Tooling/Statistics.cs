@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.Json;
@@ -19,6 +20,7 @@ namespace MindWidgetA.Tooling
                 }
             }
         }
+
         public class YesNoCounter
         {
             public int Yes { get; set; }
@@ -32,9 +34,20 @@ namespace MindWidgetA.Tooling
             }
         }
 
+        public enum StatisticKind
+        {
+            Daily,
+            Weekly,
+            Monthly,
+            Yearly,
+            Global
+        }
+
         public YesNoCounter TaskCounter { get; set; }
         public YesNoCounter QuestionCounter { get; set; }
         public GoodBadCounter GoodBad { get; set; }
+        public DateTime StartDate { get; set; }
+        public StatisticKind Kind { get; set; }
         public string InfoText
         {
             get
@@ -50,49 +63,82 @@ namespace MindWidgetA.Tooling
             }
         }
 
-        private static Statistics instance;
+        public static Statistics Daily = NewStatistics(StatisticKind.Daily);
+        public static Statistics Monthly = NewStatistics(StatisticKind.Monthly);
+        public static Statistics Weekly = NewStatistics(StatisticKind.Weekly);
+        public static Statistics Yearly = NewStatistics(StatisticKind.Yearly);
+        public static Statistics Global = NewStatistics(StatisticKind.Global);
 
-        public static Statistics Instance
+        private static Statistics NewStatistics(StatisticKind kind)
         {
-            get
+            string path = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments), kind.ToString() + "Statistics.json");
+            if (File.Exists(path))
             {
-                if (instance == null)
-                {
-                    string path = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments), "statistics.json");
-                    if (File.Exists(path))
-                    {
-                        using FileStream stream = File.OpenRead(path);
-                        var bytes = new byte[stream.Length];
-                        stream.Read(bytes);
-                        var content = Encoding.ASCII.GetString(bytes);
-                        instance = JsonSerializer.Deserialize<Statistics>(content);
-                    }
-                    else
-                    {
-                        instance = new Statistics();
-                    }
-                }
-                return instance;
+                using FileStream stream = File.OpenRead(path);
+                var bytes = new byte[stream.Length];
+                stream.Read(bytes);
+                var content = Encoding.ASCII.GetString(bytes);
+                var statistics = JsonSerializer.Deserialize<Statistics>(content);
+                statistics.checkForDateSwitch();
+                return statistics;
+            }
+            else
+            {
+                return new Statistics() { Kind = kind };
             }
         }
 
         public Statistics()
         {
+            init();
+        }
+
+        private void init()
+        {
             TaskCounter = new YesNoCounter();
             QuestionCounter = new YesNoCounter();
             GoodBad = new GoodBadCounter();
+            StartDate = DateTime.Today;
         }
 
-        public void Persist()
+        private void persist()
         {
-            string path = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments), "statistics.json");
+            string path = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments), Kind.ToString()+"Statistics.json");
             using FileStream fileStream = File.Create(path);
             var serialized = JsonSerializer.Serialize(this);
             fileStream.Write(Encoding.ASCII.GetBytes(serialized));
         }
 
-        public void IncrementTask(bool which)
+        private void checkForDateSwitch()
         {
+            var mustInit = false;
+            switch (this.Kind)
+            {
+                case StatisticKind.Daily: mustInit = StartDate.Day != DateTime.Now.Day; break;
+                case StatisticKind.Weekly: mustInit = CultureInfo.GetCultureInfo("de-DE").Calendar.GetWeekOfYear(StartDate, CalendarWeekRule.FirstFullWeek, DayOfWeek.Sunday) != CultureInfo.GetCultureInfo("de-DE").Calendar.GetWeekOfYear(StartDate, CalendarWeekRule.FirstFullWeek, DayOfWeek.Sunday); break;
+                case StatisticKind.Monthly: mustInit = StartDate.Month != DateTime.Now.Month; break;
+                case StatisticKind.Yearly: mustInit = StartDate.Year != DateTime.Now.Year; break;
+            }
+
+            if (mustInit)
+            {
+                init();
+            }
+
+        }
+
+        public static void Persist()
+        {
+            Daily.persist();
+            Weekly.persist();
+            Monthly.persist();
+            Yearly.persist();
+            Global.persist();
+        }
+
+        private void incrementTask(bool which)
+        {
+            checkForDateSwitch();
             if (which)
             {
                 TaskCounter.Yes++;
@@ -102,8 +148,9 @@ namespace MindWidgetA.Tooling
             }
         }
 
-        public void IncrementQuestion(bool which)
+        private void incrementQuestion(bool which)
         {
+            checkForDateSwitch();
             if (which)
             {
                 QuestionCounter.Yes++;
@@ -113,13 +160,48 @@ namespace MindWidgetA.Tooling
             }
         }
 
-        public void IncrementMindState(Events _event)
+        private void incrementMindState(Events _event)
         {
-            switch (_event) {
-                case Events.HappyButtonPressed: GoodBad.Good++;break;
+            checkForDateSwitch();
+            switch (_event)
+            {
+                case Events.HappyButtonPressed: GoodBad.Good++; break;
                 case Events.NeutralButtonPressed: GoodBad.Neutral++; break;
                 case Events.SadButtonPressed: GoodBad.Good++; break;
             }
+
         }
+
+        public static void IncrementTask(bool which)
+        {
+            Daily.incrementTask(which);
+            Weekly.incrementTask(which);
+            Monthly.incrementTask(which);
+            Yearly.incrementTask(which);
+            Global.incrementTask(which);
+            Persist();
+        }
+
+        public static void IncrementQuestion(bool which)
+        {
+            Daily.incrementQuestion(which);
+            Weekly.incrementQuestion(which);
+            Monthly.incrementQuestion(which);
+            Yearly.incrementQuestion(which);
+            Global.incrementQuestion(which);
+            Persist();
+        }
+
+        public static void IncrementMindState(Events _event)
+        {
+            Daily.incrementMindState(_event);
+            Weekly.incrementMindState(_event);
+            Monthly.incrementMindState(_event);
+            Yearly.incrementMindState(_event);
+            Global.incrementMindState(_event);
+            Persist();
+        }
+
+
     }
 }
