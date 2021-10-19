@@ -30,7 +30,7 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_centerInParent="true"
-		android:text="Guten Morgen\n\nWie füllst Du Dich heute?"
+		android:text="Guten Morgen\n\nWie fühlst Du Dich heute?"
 		android:typeface="serif"
 		android:textSize="10pt"
 		android:textStyle="bold"

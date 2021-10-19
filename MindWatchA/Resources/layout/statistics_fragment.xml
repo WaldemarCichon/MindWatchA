@@ -33,9 +33,14 @@
 				android:layout_height="wrap_content"
 				android:text="Woche"/>
 			<RadioButton
+				android:layout_marginRight="18dp"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:text="Monat"/>
+			<RadioButton
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="Jahr"/>
 		</RadioGroup>
 
 		<LinearLayout
@@ -49,7 +54,8 @@
 				android:layout_width="0dp"
 				android:layout_height="500dp"
 				android:id="@+id/sfChart1"
-				app:titleText="Übersicht"
+				app:titleText="Fragen"
+				app:titleSize="24"
 		
 		/>
 			<Com.Syncfusion.Charts.SfChart
@@ -59,17 +65,18 @@
 				android:layout_width="0dp"
 				android:layout_height="500dp"
 				android:id="@+id/sfChart2"
-				app:titleText="Übersicht"
-		
+				app:titleText="Aufgaben"
+				app:titleSize="24"
 		/>
 		</LinearLayout>
 		<Com.Syncfusion.Charts.SfChart
+			app:titleSize="24"
 			android:minWidth="25px"
 			android:minHeight="25px"
 			android:layout_width="match_parent"
 			android:layout_height="500dp"
 			android:id="@+id/sfChart3"
-			app:titleText="Übersicht"
+			app:titleText="Gemütszustand"
 		
 		/>
 

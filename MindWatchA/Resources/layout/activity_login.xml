@@ -16,6 +16,13 @@
 		android:layout_gravity="center_horizontal"
 		android:layout_marginBottom="30px"
 		android:layout_marginTop="20px"/>
+	<ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+		android:src="@drawable/logo"
+		android:layout_marginBottom="20dp"
+		android:layout_gravity="top|center_horizontal"
+		android:contentDescription="logo"/>
 	<TextView
 		android:text="Mail-Adresse"
 		android:textAppearance="?android:attr/textAppearanceMedium"
@@ -53,6 +60,13 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:id="@+id/loginButton"
+		android:layout_marginTop="30px"
+		android:layout_gravity="center_horizontal"/>
+	<Button
+		android:text="Neu anlegen"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:id="@+id/signUpButton"
 		android:layout_marginTop="30px"
 		android:layout_gravity="center_horizontal"/>
 </LinearLayout>

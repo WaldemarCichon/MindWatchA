@@ -109,6 +109,7 @@
     <Compile Include="UI\Fragments\SettingsFragment.cs" />
     <Compile Include="UI\Fragments\StatisticsFragment.cs" />
     <Compile Include="UI\ChartUpdater.cs" />
+    <Compile Include="SignUpActivity.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

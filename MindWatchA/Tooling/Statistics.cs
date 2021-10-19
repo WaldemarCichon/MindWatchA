@@ -68,6 +68,13 @@ namespace MindWidgetA.Tooling
         public static Statistics Weekly = NewStatistics(StatisticKind.Weekly);
         public static Statistics Yearly = NewStatistics(StatisticKind.Yearly);
         public static Statistics Global = NewStatistics(StatisticKind.Global);
+        public static Statistics[] All = new Statistics[]  {
+            Daily,
+            Weekly,
+            Monthly,
+            Yearly,
+            Global
+        };
 
         private static Statistics NewStatistics(StatisticKind kind)
         {

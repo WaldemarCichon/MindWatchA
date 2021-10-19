@@ -28,17 +28,15 @@ namespace MindWatchA.UI.Fragments
         public override void OnViewCreated(View view, Bundle savedInstanceState)
         {
             base.OnViewCreated(view, savedInstanceState);
-            var chart = new ChartUpdater(view.FindViewById<SfChart>(Resource.Id.sfChart1));
-            var chart1 = new ChartUpdater(view.FindViewById<SfChart>(Resource.Id.sfChart2));
-            var chart2 = new ChartUpdater(view.FindViewById<SfChart>(Resource.Id.sfChart3));
-            var data = new List<Record>();
-            data.Add(new Record("Hallo", 10));
-            data.Add(new Record("Schmallow", 12));
-            data.Add(new Record("Blah", 20));
-            chart.Data = data;
-            data.Add(new Record("Tada", 20));
-            chart1.Data = data;
-            chart2.Data = data;
+            var questionChart = new ChartUpdater(view.FindViewById<SfChart>(Resource.Id.sfChart1), ChartType.QuestionChart);
+            var taskChart = new ChartUpdater(view.FindViewById<SfChart>(Resource.Id.sfChart2), ChartType.TaskChart);
+            var stateOfMindChart = new ChartUpdater(view.FindViewById<SfChart>(Resource.Id.sfChart3), ChartType.StateOfMindChart);
+            var intervalRadioGroup = view.FindViewById<RadioGroup>(Resource.Id.interval_radio_group);
+            questionChart.IntervalRadioGroup = intervalRadioGroup;
+            taskChart.IntervalRadioGroup = intervalRadioGroup;
+            stateOfMindChart.IntervalRadioGroup = intervalRadioGroup;
+            (intervalRadioGroup.GetChildAt(0) as RadioButton).Checked = true;
+            
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
