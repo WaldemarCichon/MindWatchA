@@ -56,7 +56,7 @@ namespace MindWatchA.UI
 
         private void changeSelection(int intervalKind)
         {
-            var currentStatistics = Statistics.All[intervalKind];
+            var currentStatistics = Statistics.All[intervalKind-1];
             switch (chartType)
             {
                 case ChartType.QuestionChart: fillYesNoChart(currentStatistics.QuestionCounter); break;
@@ -101,11 +101,16 @@ namespace MindWatchA.UI
                     ((PieSeries)series).ExplodableOnTouch = true;
                     
                 }
+                /*
                 if (chart.Series.Count > 0)
                 {
                     chart.Series.RemoveAt(0);
                 }
-                chart.Series.Add(series);
+                */
+                if (chart.Series.Count == 0)
+                {
+                    chart.Series.Add(series);
+                }
                 chart.Legend.Visibility = Visibility.Visible;
                 series.DataMarker.ShowLabel = true;
                 series.DataMarker.ShowMarker = true;

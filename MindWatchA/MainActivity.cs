@@ -58,6 +58,7 @@ namespace MindWatchA
             Instance = this;
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             SetContentView(Resource.Layout.bottom_navigation);
+            StartActivity(typeof(SignUpActivity));
             user = User.Instance;
             if (user.user_id == null)
             {

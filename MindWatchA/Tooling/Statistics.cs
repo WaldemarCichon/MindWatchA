@@ -174,7 +174,7 @@ namespace MindWidgetA.Tooling
             {
                 case Events.HappyButtonPressed: GoodBad.Good++; break;
                 case Events.NeutralButtonPressed: GoodBad.Neutral++; break;
-                case Events.SadButtonPressed: GoodBad.Good++; break;
+                case Events.SadButtonPressed: GoodBad.Bad++; break;
             }
 
         }

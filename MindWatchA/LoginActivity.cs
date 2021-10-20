@@ -75,7 +75,7 @@ namespace MindWatchA
             }
             var user = User.Instance;
             user.email = mailAddress.Text;
-            user.name = mailAddress.Text;
+            //user.name = mailAddress.Text;
             user.user_id = userId;
             user.test_mode = testModeCheckBox.Checked;
             user.Persist();

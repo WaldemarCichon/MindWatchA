@@ -28,6 +28,7 @@ namespace Selftastic_WS_Test.API
 
 
         private static ApiCall instance;
+        private static ApiCall adminInstance;
 
         private HttpClient httpClient;
 
@@ -59,6 +60,18 @@ namespace Selftastic_WS_Test.API
                     instance = new ApiCall(ApiUrl, new Authentification(UserName, Password));
                 }
                 return instance;
+            }
+        }
+
+        public static ApiCall AdminInstance
+        {
+            get
+            {
+                if (adminInstance == null)
+                {
+                    adminInstance = new ApiCall(ApiUrl, new Authentification(AdminName, AdminPassword));
+                }
+                return adminInstance;
             }
         }
 
@@ -159,6 +172,22 @@ namespace Selftastic_WS_Test.API
             answerResult.EnsureSuccessStatusCode();
             var result = await answerResult.Content.ReadAsStringAsync();
             return result;
+        }
+
+        public async Task<bool> PostUser(User user)
+        {
+            var answerResult = await httpClient.PostAsJsonAsync("/user", user).ConfigureAwait(false);
+            if (answerResult.StatusCode == System.Net.HttpStatusCode.InternalServerError || answerResult.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return false;
+            }
+            answerResult.EnsureSuccessStatusCode();
+            var headers = answerResult.Headers;
+            var location = headers.Location;
+            var splitted = location.ToString().Split("/");
+            var id = splitted[splitted.Length - 1];
+            user.user_id = id;
+            return true;
         }
 
         public async Task TestLogin()
