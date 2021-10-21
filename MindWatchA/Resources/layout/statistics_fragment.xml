@@ -23,21 +23,25 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content">
 			<RadioButton
+				android:id="@+id/statistic_day"
 				android:layout_marginRight="30dp"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:text="Tag"/>
 			<RadioButton
+				android:id="@+id/statistic_week"
 				android:layout_marginRight="20dp"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:text="Woche"/>
 			<RadioButton
+				android:id="@+id/statistic_month"
 				android:layout_marginRight="18dp"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:text="Monat"/>
 			<RadioButton
+				android:id="@+id/statistic_year"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:text="Jahr"/>

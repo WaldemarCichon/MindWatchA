@@ -56,7 +56,15 @@ namespace MindWatchA.UI
 
         private void changeSelection(int intervalKind)
         {
-            var currentStatistics = Statistics.All[intervalKind-1];
+            var index = 0;
+            switch (intervalKind)
+            {
+                case Resource.Id.statistic_day: index = 0; break;
+                case Resource.Id.statistic_week: index = 1; break;
+                case Resource.Id.statistic_month: index = 2; break;
+                case Resource.Id.statistic_year: index = 3; break;
+            }
+            var currentStatistics = Statistics.All[index];
             switch (chartType)
             {
                 case ChartType.QuestionChart: fillYesNoChart(currentStatistics.QuestionCounter); break;

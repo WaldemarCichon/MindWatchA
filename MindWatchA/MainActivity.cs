@@ -58,7 +58,6 @@ namespace MindWatchA
             Instance = this;
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             SetContentView(Resource.Layout.bottom_navigation);
-            StartActivity(typeof(SignUpActivity));
             user = User.Instance;
             if (user.user_id == null)
             {
@@ -66,8 +65,7 @@ namespace MindWatchA
                 StartActivity(typeof(LoginActivity));
             }
             var bottomnavigation = FindViewById<BottomNavigationView>(Resource.Id.navigation);
-            bottomnavigation.ItemSelected += (sender, args) =>  LoadFragment(((BottomNavigationView)sender).SelectedItemId);
-
+            bottomnavigation.ItemSelected += (sender, args) => LoadFragment(args.Item.ItemId);
             LoadFragment(Resource.Id.navigation_statistics);
             // bottomnavigation.Selected
 
