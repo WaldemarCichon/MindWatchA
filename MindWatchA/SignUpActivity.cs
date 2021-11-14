@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -68,8 +69,21 @@ namespace MindWatchA
                 case Resource.Id.none: user.gender = "none";break;
 
             }
-            user.gender = Enums.Gender.male.ToString();
+            try
+            {
+                DateTime.ParseExact(birthDateEditText.Text, "dd.MM.yyyy", CultureInfo.GetCultureInfo("de-DE"));
+            } catch (Exception)
+            {
+                var alert = new AlertDialog.Builder(this);
+                alert.SetTitle("Geburtsdatum");
+                alert.SetMessage("Das Geburtsdatum entspricht nicht dem Muster tt.mm.jjjj");
+                Dialog dialog = null;
+                alert.SetNeutralButton("OK", (sender, eventArgs) => { dialog.Dismiss(); });
+                (dialog = alert.Create()).Show();
+                return;
+            }
             user.password = password1EditText.Text;
+            user.email = mailAddressEditText.Text;
             await ApiCall.AdminInstance.PostUser(user);
             user.Persist();
             StartActivity(typeof(MainActivity));

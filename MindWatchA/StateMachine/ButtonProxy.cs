@@ -28,6 +28,7 @@ namespace MindWidgetA.StateMachine
 
         private void InternalClickHandler(object sender, EventArgs e)
         {
+            Console.WriteLine("Button pushed");
             stateMachine.PushEvent(_event);
         }
 

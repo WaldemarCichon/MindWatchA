@@ -63,6 +63,15 @@ namespace Selftastic_WS_Test.Models.Single
             var serialized = JsonSerializer.Serialize(this);
             fileStream.Write(Encoding.ASCII.GetBytes(serialized));
         }
+
+        public static void Remove()
+        {
+            string path = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments), "user.json");
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+        }
     }
 
 

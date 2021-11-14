@@ -63,7 +63,7 @@ namespace MindWidgetA.StateMachine
                 {
                     Console.WriteLine("Old Value" + remoteTextView.Text);
                     Console.WriteLine("Setting remote text to " + value);
-                 
+                   
                     Xamarin.Essentials.MainThread.BeginInvokeOnMainThread(() => remoteTextView.Text = value);
                     Console.WriteLine("CurrentValue" + remoteTextView.Text);
                     var remoteViews = remoteTextView.RemoteViews;

@@ -131,7 +131,7 @@
             android:layout_width="1px"
             android:layout_height="wrap_content"
 			android:layout_weight="4"
-			android:orientation="horizontal">
+			android:orientation="vertical">
 			<RadioButton
 				android:id="@+id/male"
 				android:layout_marginRight="10dp"

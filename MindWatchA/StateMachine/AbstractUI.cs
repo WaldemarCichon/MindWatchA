@@ -92,6 +92,8 @@ namespace MindWidgetA.StateMachine
             BackButton.Register(backButton);
             Background.Register(backgroundImage);
             MainText.Register(mainText);
+
+            MainText.Text = "Barbara";
         }
 
         internal void FinishedRegistration()

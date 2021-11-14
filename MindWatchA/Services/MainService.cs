@@ -6,16 +6,19 @@ using Android.Content;
 using Android.OS;
 using Android.Runtime;
 using Android.Widget;
+using AndroidX.Core.App;
 using MindWidgetA.StateMachine;
 using MindWidgetA.UI;
 
 // SEE https://docs.microsoft.com/en-us/answers/questions/301019/xamarinandroid-widget-not-working-when-app-is-clos.html
 // SEE https://stackoverflow.com/questions/60028587/background-service-with-isolated-process-in-xamarin-forms/60032046
+// SEE https://www.titanwolf.org/Network/q/e5784f5b-c4f0-430b-910d-ef65905437df/y
+
 // SEE https://developer.android.com/about/versions/oreo/background.html
 namespace MindWatchA.Services
 {
     [Service(Enabled = true, Exported = false)]
-    public class MainService: Service
+    public class MainService: JobIntentService
     {
         public const String HAPPY_BTN_CLICKED = "HappyButtonClicked";
         public const String NEUTRAL_BTN_CLICKED = "NeutralButtonClicked";
@@ -43,7 +46,7 @@ namespace MindWatchA.Services
             base.OnCreate();
             Console.WriteLine("Service - on create");
             // createNotificationChannel();
-            // StartForeground(1, new Notification(18, "Text blah"));
+            StartForeground(1, new Notification(18, "Text blah"));
             Console.WriteLine("Service created");
             /*
             handler = new Handler();
@@ -100,7 +103,7 @@ namespace MindWatchA.Services
                     buttonClicked(buttonAction);
                 }
             }
-            //StopSelf(startId);
+            StopSelf(startId);
             //return StartCommandResult.Sticky;
         }
 
@@ -109,7 +112,7 @@ namespace MindWatchA.Services
             Console.WriteLine("Button clicked");
             Console.WriteLine(buttonAction);
 
-
+            buttonAction = "";
             switch (buttonAction)
             {
                 case INFO_BTN_CLICKED: ui.InfoButton.Clicked(this, null); break;
@@ -166,6 +169,11 @@ namespace MindWatchA.Services
         public override IBinder OnBind(Intent intent)
         {
             return null;
+        }
+
+        protected override void OnHandleWork(Intent intent)
+        {
+            throw new NotImplementedException();
         }
     }
 }
