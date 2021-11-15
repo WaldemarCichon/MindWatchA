@@ -36,6 +36,7 @@ namespace MindWidgetA.StateMachine
         private RemoteButton okButton;
         private RemoteButton noButton;
         private RemoteButton backButton;
+        private RemoteButton laterButton;
         private StateMachine stateMachine;
 
         private AbstractUI()
@@ -67,6 +68,7 @@ namespace MindWidgetA.StateMachine
             okButton = new RemoteButton(Resource.Id.ok_widget);
             noButton = new RemoteButton(Resource.Id.no_widget);
             backButton = new RemoteButton(Resource.Id.back_widget);
+            laterButton = new RemoteButton(Resource.Id.later_widget);
 
             Console.WriteLine("Abstract UI created");
         }
@@ -83,6 +85,7 @@ namespace MindWidgetA.StateMachine
             okButton.SetBaseData(remoteViews, widget, appWidgetManager);
             noButton.SetBaseData(remoteViews, widget, appWidgetManager);
             backButton.SetBaseData(remoteViews, widget, appWidgetManager);
+            laterButton.SetBaseData(remoteViews, widget, appWidgetManager);
             HappyButton.Register(happyButton);
             NeutralButton.Register(neutralButton);
             SadButton.Register(sadButton);
@@ -92,8 +95,7 @@ namespace MindWidgetA.StateMachine
             BackButton.Register(backButton);
             Background.Register(backgroundImage);
             MainText.Register(mainText);
-
-            MainText.Text = "Barbara";
+            LaterButton.Register(laterButton);
         }
 
         internal void FinishedRegistration()
