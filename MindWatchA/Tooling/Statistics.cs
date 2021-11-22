@@ -14,6 +14,7 @@ namespace MindWidgetA.Tooling
             public int Good { get; set; }
             public int Neutral { get; set; }
             public int Bad { get; set; }
+            
             public int Total { get
                 {
                     return Good + Neutral + Bad;
@@ -25,13 +26,9 @@ namespace MindWidgetA.Tooling
         {
             public int Yes { get; set; }
             public int No { get; set; }
-            public int Total
-            {
-                get
-                {
-                    return Yes + No;
-                }
-            }
+            public int Later { get; set; }
+            public int Total => Yes + No + Later;
+            public int TotalWithoutLater => Yes + No;
         }
 
         public enum StatisticKind
@@ -176,7 +173,26 @@ namespace MindWidgetA.Tooling
                 case Events.NeutralButtonPressed: GoodBad.Neutral++; break;
                 case Events.SadButtonPressed: GoodBad.Bad++; break;
             }
+        }
 
+        public int Yes => TaskCounter.Yes + QuestionCounter.Yes;
+
+        public int No => TaskCounter.No + QuestionCounter.No;
+
+        public int Later => TaskCounter.Later + QuestionCounter.Later;
+
+        private int points => Yes * 100 + No * 25 + GoodBad.Good * 100 + GoodBad.Neutral * 50 + GoodBad.Bad * 25;
+
+        private void incrementLater(bool isTask)
+        {
+            checkForDateSwitch();
+            if (isTask)
+            {
+                TaskCounter.Later++;
+            } else
+            {
+                QuestionCounter.Later++;
+            }
         }
 
         public static void IncrementTask(bool which)
@@ -209,6 +225,16 @@ namespace MindWidgetA.Tooling
             Persist();
         }
 
+        internal static void IncrementLater(bool isTask)
+        {
+            Daily.incrementLater(isTask);
+            Weekly.incrementLater(isTask);
+            Monthly.incrementLater(isTask);
+            Yearly.incrementLater(isTask);
+            Global.incrementLater(isTask);
+            Persist();
+        }
 
+        internal static int Points => Global.points;
     }
 }

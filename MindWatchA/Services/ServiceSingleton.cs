@@ -54,6 +54,7 @@ namespace MindWatchA.Services
                 case MainWidget.BACK_BTN_CLICKED: Ui.BackButton.Clicked(this, null); break;
                 case MainWidget.OK_BTN_CLICKED: Ui.OkButton.Clicked(this, null); break;
                 case MainWidget.NO_BTN_CLICKED: Ui.NoButton.Clicked(this, null); break;
+                case MainWidget.LATER_BTN_CLICKED: Ui.LaterButton.Clicked(this, null); break;
             }
         }
 

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using MindWatchA.Attributes;
 using MindWatchA.Models.Single;
 using Selftastic_WS_Test.Models.Collections;
 using Selftastic_WS_Test.Models.Single;
 
 namespace MindWatchA.Models.Collections
 {
+    [LocalOnly]
     public class SavedTaskQuestions: GenericModelCollection<SavedTaskQuestion>
     {
             public SavedTaskQuestions() : base() { }
@@ -40,8 +42,7 @@ namespace MindWatchA.Models.Collections
          
         private void Add(SavedTaskQuestion savedTaskQuestion)
         {
-            
-            throw new NotImplementedException();
+            base.positions.Add(savedTaskQuestion);
         }
     }
-    }
+}

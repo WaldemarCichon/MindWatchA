@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Text.Json.Serialization;
 using Selftastic_WS_Test.Models.Single;
 
 namespace MindWatchA.Models.Single
@@ -9,6 +10,11 @@ namespace MindWatchA.Models.Single
 
         private Task task;
         private Question question;
+
+        public SavedTaskQuestion(): base()
+        {
+
+        }
 
         public SavedTaskQuestion(Question question)
         {
@@ -20,11 +26,13 @@ namespace MindWatchA.Models.Single
             this.task = task;
         }
 
+        [JsonIgnore]
         public bool IsTask
         {
             get => task != null;
         }
 
+        [JsonIgnore]
         public bool IsQuestion
         {
             get => question != null;
@@ -33,32 +41,35 @@ namespace MindWatchA.Models.Single
         public Task Task
         {
             get => task;
-            set => Task = value; 
+            set { task = value; }
         }
 
         public Question Question
         {
             get => question;
-            set => question = value;
+            set { question = value; } 
         }
 
-        public new string Text
+        public override string Text { get => IsTask ? Task.Text : Question.Text; set => base.Text = value; }
+
+        [JsonIgnore]
+        public string Type
         {
-            get => ToString();
+            get => IsTask ? "Aufgabe" : "Frage";
         }
 
-        public override string Id { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public override string Id { get; set; } = "???";
 
         public override string ToString()
         { 
             if (IsTask)
             {
-                return task.Text;
+                return Type + " => " + task.Title;
             }
 
             if (IsQuestion)
             {
-                return question.Text;
+                return Type + " => " + question.Title;
             }
 
             return null;

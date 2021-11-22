@@ -22,10 +22,10 @@ namespace MindWidgetA.StateMachine
         public ButtonProxy NoButton { get; }
         public ButtonProxy LogoutButton { get; }
         public ButtonProxy SyncButton { get; }
-
         public TextViewProxy MainText { get; }
-
         public ImageViewProxy Background { get; }
+        public ImageViewProxy MoneyIcon { get; }
+        public TextViewProxy PointsAmountText { get; }
 
         private RemoteImageView backgroundImage;
         private RemoteTextView mainText;
@@ -37,6 +37,9 @@ namespace MindWidgetA.StateMachine
         private RemoteButton noButton;
         private RemoteButton backButton;
         private RemoteButton laterButton;
+        private RemoteTextView pointsAmountText;
+        private RemoteImageView moneyIcon;
+
         private StateMachine stateMachine;
 
         private AbstractUI()
@@ -56,6 +59,8 @@ namespace MindWidgetA.StateMachine
             Background = new ImageViewProxy();
             SyncButton = new ButtonProxy(stateMachine, Events.SyncButtonPressed);
             LogoutButton = new ButtonProxy(stateMachine, Events.LogoutButtonPressed);
+            MoneyIcon = new ImageViewProxy();
+            PointsAmountText = new TextViewProxy();
 
             Console.WriteLine("Proxies created");
 
@@ -69,13 +74,15 @@ namespace MindWidgetA.StateMachine
             noButton = new RemoteButton(Resource.Id.no_widget);
             backButton = new RemoteButton(Resource.Id.back_widget);
             laterButton = new RemoteButton(Resource.Id.later_widget);
-
+            pointsAmountText = new RemoteTextView(Resource.Id.points_amount_text);
+            moneyIcon = new RemoteImageView(Resource.Id.money_icon);
             Console.WriteLine("Abstract UI created");
         }
 
         internal void SetBaseData(RemoteViews remoteViews, ComponentName widget, AppWidgetManager appWidgetManager)
         {
             StateMachine.RemoteViews = remoteViews;
+
             backgroundImage.SetBaseData(remoteViews, widget, appWidgetManager);
             mainText.SetBaseData(remoteViews, widget, appWidgetManager);
             happyButton.SetBaseData(remoteViews, widget, appWidgetManager);
@@ -86,6 +93,9 @@ namespace MindWidgetA.StateMachine
             noButton.SetBaseData(remoteViews, widget, appWidgetManager);
             backButton.SetBaseData(remoteViews, widget, appWidgetManager);
             laterButton.SetBaseData(remoteViews, widget, appWidgetManager);
+            pointsAmountText.SetBaseData(remoteViews, widget, appWidgetManager);
+            moneyIcon.SetBaseData(remoteViews, widget, appWidgetManager);
+
             HappyButton.Register(happyButton);
             NeutralButton.Register(neutralButton);
             SadButton.Register(sadButton);
@@ -94,8 +104,10 @@ namespace MindWidgetA.StateMachine
             NoButton.Register(noButton);
             BackButton.Register(backButton);
             Background.Register(backgroundImage);
-            MainText.Register(mainText);
+            MainText.Register(mainText, Resource.Id.mainText);
             LaterButton.Register(laterButton);
+            PointsAmountText.Register(pointsAmountText, Resource.Id.points_amount_text);
+            MoneyIcon.Register(moneyIcon);
         }
 
         internal void FinishedRegistration()

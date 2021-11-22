@@ -17,6 +17,7 @@ namespace MindWidgetA.StateMachine
         private TextView textView;
         private ListView listView;
         private string _text;
+        private int remoteTextViewId;
         private ViewStates _visibility;
         public  RemoteTextView remoteTextView;
         private List<String> listViewText;
@@ -31,9 +32,10 @@ namespace MindWidgetA.StateMachine
             this.textView = textView;
         }
 
-        public void Register (RemoteTextView remoteTextView)
+        public void Register (RemoteTextView remoteTextView, int id)
         {
             this.remoteTextView = remoteTextView;
+            this.remoteTextViewId = id;
         }
 
         public void Register (ListView listView, Context context)
@@ -63,13 +65,14 @@ namespace MindWidgetA.StateMachine
                 {
                     Console.WriteLine("Old Value" + remoteTextView.Text);
                     Console.WriteLine("Setting remote text to " + value);
+                    // remoteTextView.Text = value;
                    
                     Xamarin.Essentials.MainThread.BeginInvokeOnMainThread(() => remoteTextView.Text = value);
                     Console.WriteLine("CurrentValue" + remoteTextView.Text);
                     var remoteViews = remoteTextView.RemoteViews;
                     var context = Application.Context;
                     // var remoteViews = new RemoteViews(context.PackageName, Resource.Layout.widget_main);
-                    remoteViews.SetTextViewText(Resource.Id.mainText, value);
+                    remoteViews.SetTextViewText(remoteTextViewId, value);
                     var appWidgetManager = AppWidgetManager.GetInstance(context);
                     ComponentName widget = new ComponentName(context, Java.Lang.Class.FromType(typeof(MainWidget)));
                     appWidgetManager.UpdateAppWidget(widget, remoteViews);

@@ -27,6 +27,7 @@ namespace MindWidgetA.UI
         public const String BACK_BTN_CLICKED = "BackButtonClicked";
         public const String OK_BTN_CLICKED = "OkButtonClicked";
         public const String NO_BTN_CLICKED = "NoButtonClicked";
+        public const String LATER_BTN_CLICKED = "LaterButtonClicked";
 
         private static AbstractUI ui;
 
@@ -38,7 +39,7 @@ namespace MindWidgetA.UI
         public override void OnRestored(Context context, int[] oldWidgetIds, int[] newWidgetIds)
         {
             base.OnRestored(context, oldWidgetIds, newWidgetIds);
-            Console.WriteLine("Widget - on restored");
+            Console.WriteLine("=====>>> Widget - on restored");
         }
 
         public override void OnDeleted(Context context, int[] appWidgetIds)
@@ -46,19 +47,19 @@ namespace MindWidgetA.UI
             base.OnDeleted(context, appWidgetIds);
             Intent intent = new Intent(context.ApplicationContext, typeof(MainService));
             context.StopService(intent);
-            Console.WriteLine("Widget - on deleted");
+            Console.WriteLine("====>>>> Widget - on deleted");
         }
 
         public override void OnAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager, int appWidgetId, Bundle newOptions)
         {
             base.OnAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions);
-            Console.WriteLine("Widget - on options changed");
+            Console.WriteLine("====>>> Widget - on options changed");
         }
 
         public override void OnEnabled(Context context)
         {
             base.OnEnabled(context);
-            Console.WriteLine("Widget - on enabled");
+            Console.WriteLine("=====>>>> Widget - on enabled");
         }
 
         static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId)
@@ -71,6 +72,7 @@ namespace MindWidgetA.UI
             views.SetOnClickPendingIntent(Resource.Id.back_widget, GetPendingSelfIntent(context, BACK_BTN_CLICKED));
             views.SetOnClickPendingIntent(Resource.Id.ok_widget, GetPendingSelfIntent(context, OK_BTN_CLICKED));
             views.SetOnClickPendingIntent(Resource.Id.no_widget, GetPendingSelfIntent(context, NO_BTN_CLICKED));
+            views.SetOnClickPendingIntent(Resource.Id.later_widget, GetPendingSelfIntent(context, LATER_BTN_CLICKED));
 
             appWidgetManager.UpdateAppWidget(appWidgetId, views);
         }

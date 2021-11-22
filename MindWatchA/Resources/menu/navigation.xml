@@ -5,10 +5,15 @@
         android:id="@+id/navigation_statistics"
         android:icon="@drawable/chart"
         android:title="Intormstion" />
- 
+
+     <item
+        android:id="@+id/navigation_saved_items"
+        android:icon="@drawable/save_img"
+        android:title="Gemerkte Elemente"
+        />
+
     <item
         android:id="@+id/navigation_settings"
         android:icon="@drawable/settings"
         android:title="Einstellungen" />
- 
 </menu>

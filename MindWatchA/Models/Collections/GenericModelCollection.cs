@@ -1,4 +1,5 @@
-﻿using Selftastic_WS_Test.API;
+﻿using MindWatchA.Attributes;
+using Selftastic_WS_Test.API;
 using Selftastic_WS_Test.Enums;
 using Selftastic_WS_Test.Models.Single;
 using System;
@@ -37,6 +38,7 @@ namespace Selftastic_WS_Test.Models.Collections
             random = new Random();
         }
 
+        [JsonIgnore]
         public Boolean? IsDifficult
         {
             get {
@@ -95,13 +97,26 @@ namespace Selftastic_WS_Test.Models.Collections
                 var bytes = new byte[stream.Length];
                 stream.Read(bytes);
                 var content = Encoding.ASCII.GetString(bytes);
-                newInstance = JsonSerializer.Deserialize<C>(content);
-                return newInstance;
+                try
+                {
+                    newInstance = JsonSerializer.Deserialize<C>(content);
+                    return newInstance;
+                } catch (Exception ex) {
+                    Console.WriteLine(ex);
+                }
             }
-            Console.WriteLine(typeof(C).Name + " loaded from web service");
-            var properties = typeof(C).GetProperties();
-            var property = typeof(C).GetProperty("InstanceFromWebservice");
-            newInstance = (C)property.GetValue(null);
+            if (System.Attribute.GetCustomAttribute(typeof(C), typeof(LocalOnly)) != null)
+            {
+                var constructor = typeof(C).GetConstructor(System.Type.EmptyTypes);
+                newInstance = (C)constructor.Invoke(null);
+            }
+            else
+            {
+                Console.WriteLine(typeof(C).Name + " loaded from web service");
+                var properties = typeof(C).GetProperties();
+                var property = typeof(C).GetProperty("InstanceFromWebservice");
+                newInstance = (C)property.GetValue(null);
+            }
             newInstance.Persist();
             return newInstance;
         }

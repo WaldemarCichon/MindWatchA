@@ -18,6 +18,7 @@ using Android.Appwidget;
 using MindWidgetA.UI;
 using Android.Content;
 using Android.Widget;
+using MindWatchA.Models.Collections;
 
 namespace MindWidgetA.StateMachine
 {
@@ -42,6 +43,7 @@ namespace MindWidgetA.StateMachine
         private static Timer timer;
         private static States LastQuestionTaskState = States.TASK;
         private const int DoNotChangeTimer = -1;
+        private const int UseLastAffirmationDuration = -1;
         private const int UseChosenDuration = -2;
 
         public States CurrentStateProxy { get
@@ -105,11 +107,11 @@ namespace MindWidgetA.StateMachine
         private StateTransitions TaskStateTransistions = new StateTransitions(States.TASK).
             Add(new Transition(States.AFFIRMATION, Events.YesButtonPressed, () => { return true; }, () => { setTaskAnswer(true); })).
             Add(new Transition(States.AFFIRMATION, Events.NoButtonPressed, () => { return true; }, () => { setTaskAnswer(false); })).
-            Add(new Transition(States.CHOOSE_LATER, Events.ChooseLaterPressed, () => { return true; }, setChooseLaterState));
+            Add(new Transition(States.AFFIRMATION, Events.ChooseLaterPressed, () => { return true; }, saveTaskQuestions));
         private StateTransitions QuestionStateTransitions = new StateTransitions(States.QUESTION).
             Add(new Transition(States.AFFIRMATION, Events.YesButtonPressed, () => { return true; }, () => { setQuestionAnswer(true); })).
             Add(new Transition(States.AFFIRMATION, Events.NoButtonPressed, () => { return true; }, () => { setQuestionAnswer(false); })).
-            Add(new Transition(States.CHOOSE_LATER, Events.ChooseLaterPressed, () => { return true; }, setChooseLaterState));
+            Add(new Transition(States.AFFIRMATION, Events.ChooseLaterPressed, () => { return true; }, saveTaskQuestions));
         private StateTransitions InfoStateTransisions = new StateTransitions(States.INFO).
             Add(new Transition(States.AFFIRMATION, Events.BackButtonPressed, () => { return true; }, () => { setAffirmationState(DoNotChangeTimer); })).
             Add(new Transition(States.QUESTION, Events.TimeEllapsed, () => LastQuestionTaskState == States.TASK /* ^ laterChosen*/, () => { setQuestionState(); })).
@@ -229,7 +231,10 @@ namespace MindWidgetA.StateMachine
             UI.InfoButton.Visibility = Android.Views.ViewStates.Gone;
             UI.OkButton.Visibility = Android.Views.ViewStates.Gone;
             UI.NoButton.Visibility = Android.Views.ViewStates.Gone;
-            UI.Background.SetImageResource(Resource.Drawable.gemuetszustand);
+            UI.LaterButton.Visibility = Android.Views.ViewStates.Gone;
+            UI.PointsAmountText.Visibility = Android.Views.ViewStates.Gone;
+            UI.MoneyIcon.Visibility = Android.Views.ViewStates.Gone;
+            UI.Background.SetImageResource(Resource.Drawable.mindset_background);
             sendAnswerAsync(Selftastic_WS_Test.Enums.MoodAnswerKind.shown);
             setGreetingsTimer(TimeConstants.SecondsToNextGreeting);
             Console.WriteLine("SetGreetingsState finished");
@@ -244,13 +249,13 @@ namespace MindWidgetA.StateMachine
                 lastAffirmationDuration = seconds;
             } else
             {
-                if (seconds == UseChosenDuration)
+                if (seconds == UseLastAffirmationDuration)
+                // if (seconds == UseChosenDuration)
                 {
-                    /*
+                    
                     vibrate();
-                    setTimer(chosenLaterDuration);
+                    setTimer(lastAffirmationDuration);
                     laterChosen = true;
-                    */
                 }
             }
 
@@ -260,13 +265,15 @@ namespace MindWidgetA.StateMachine
             UI.OkButton.Visibility = Android.Views.ViewStates.Gone;
             UI.NoButton.Visibility = Android.Views.ViewStates.Gone;
             UI.BackButton.Visibility = Android.Views.ViewStates.Gone;
-            UI.LaterButton.Visibility = Android.Views.ViewStates.Gone;
             UI.InfoButton.Visibility = Android.Views.ViewStates.Visible;
             UI.MainText.Visibility = Android.Views.ViewStates.Visible;
-            UI.Background.SetImageResource(Resource.Drawable.affirmations);
-            UI.MainText.Text = Affirmations.Instance.NewRandom.Text;
+            UI.Background.SetImageResource(Resource.Drawable.affirmation_background);
+            UI.MainText.Text = Affirmations.Instance.NewRandom.Output;
             UI.SyncButton.Visibility = Android.Views.ViewStates.Gone;
             UI.LogoutButton.Visibility = Android.Views.ViewStates.Gone;
+            UI.LaterButton.Visibility = Android.Views.ViewStates.Gone;
+            UI.PointsAmountText.Visibility = Android.Views.ViewStates.Gone;
+            UI.MoneyIcon.Visibility = Android.Views.ViewStates.Gone;
             Affirmations.Instance.SendAnswer(Selftastic_WS_Test.Enums.AnswerKind.shown);
         }
 
@@ -276,31 +283,34 @@ namespace MindWidgetA.StateMachine
             UI.OkButton.Visibility = Android.Views.ViewStates.Visible;
             UI.NoButton.Visibility = Android.Views.ViewStates.Visible;
             UI.LaterButton.Visibility = Android.Views.ViewStates.Visible;
+            UI.PointsAmountText.Visibility = Android.Views.ViewStates.Visible;
+            UI.MoneyIcon.Visibility = Android.Views.ViewStates.Visible;
             UI.BackButton.Visibility = Android.Views.ViewStates.Gone;
             UI.SyncButton.Visibility = Android.Views.ViewStates.Gone;
             UI.LogoutButton.Visibility = Android.Views.ViewStates.Gone;
             // UI.backgroundImageView.SetImageResource(backgroundPicId);
             UI.MainText.Text = random;
+            UI.PointsAmountText.Text = Statistics.Points.ToString("#,##0");
             laterChosen = false;
         }
 
         private static void setQuestionState()
         {
             vibrate();
-            var question = LastQuestionTaskState == States.QUESTION ? UI.MainText.Text : Questions.Instance.NewRandom.Text;
+            var question = LastQuestionTaskState == States.QUESTION ? UI.MainText.Text : Questions.Instance.NewRandom.Output;
             setQuestionTaskState(question, Resource.Drawable.questions);
             LastQuestionTaskState = States.QUESTION;
-            UI.Background.SetImageResource(Resource.Drawable.questions);
+            UI.Background.SetImageResource(Resource.Drawable.question_backgoune);
             Questions.Instance.SendAnswer(Selftastic_WS_Test.Enums.AnswerKind.shown);
         }
 
         private static void setTaskState()
         {
             vibrate();
-            var task = LastQuestionTaskState == States.TASK ? UI.MainText.Text : Tasks.Instance.NewRandom.Text;
+            var task = LastQuestionTaskState == States.TASK ? UI.MainText.Text : Tasks.Instance.NewRandom.Output;
             setQuestionTaskState(task, Resource.Drawable.tasks);
             LastQuestionTaskState = States.TASK;
-            UI.Background.SetImageResource(Resource.Drawable.tasks);
+            UI.Background.SetImageResource(Resource.Drawable.aufgabe_hintergrund);
             Tasks.Instance.SendAnswer(Selftastic_WS_Test.Enums.AnswerKind.shown);
         }
 
@@ -329,19 +339,23 @@ namespace MindWidgetA.StateMachine
             Questions.Instance.SendAnswer(answer ? Selftastic_WS_Test.Enums.AnswerKind.accepted : Selftastic_WS_Test.Enums.AnswerKind.declined);
         }
 
-        private static void setChooseLaterState()
+        private static void saveTaskQuestions()
         {
-            UI.MainText.Visibility = Android.Views.ViewStates.Gone;
-            UI.OkButton.Visibility = Android.Views.ViewStates.Visible;
-            UI.NoButton.Visibility = Android.Views.ViewStates.Visible;
-            UI.LaterButton.Visibility = Android.Views.ViewStates.Gone;
             if (LastQuestionTaskState == States.QUESTION)
             {
+                SavedTaskQuestions.Instance.Add(Questions.Instance.Last);
+                SavedTaskQuestions.Instance.Persist();
+                Statistics.IncrementLater(true);
                 Questions.Instance.SendAnswer(Selftastic_WS_Test.Enums.AnswerKind.later);
             } else
             {
-                Questions.Instance.SendAnswer(Selftastic_WS_Test.Enums.AnswerKind.later);
+                SavedTaskQuestions.Instance.Add(Tasks.Instance.Last);
+                SavedTaskQuestions.Instance.Persist();
+                Statistics.IncrementLater(false);
+                Tasks.Instance.SendAnswer(Selftastic_WS_Test.Enums.AnswerKind.later);
             }
+           
+            setAffirmationState(UseLastAffirmationDuration);
         }
 
         private static void synchronize()

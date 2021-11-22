@@ -113,7 +113,9 @@ namespace MindWatchA
                 case Resource.Id.navigation_settings:
                     fragment = SettingsFragment.Instance;
                     break;
-
+                case Resource.Id.navigation_saved_items:
+                    fragment = SavedElementsFragment.Instance;
+                    break;
             }
 
             if (fragment == null) {
