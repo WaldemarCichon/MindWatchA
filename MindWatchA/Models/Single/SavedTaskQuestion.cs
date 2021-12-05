@@ -64,15 +64,15 @@ namespace MindWatchA.Models.Single
         { 
             if (IsTask)
             {
-                return Type + " => " + task.Title;
+                return $"{task.Title} ( {Type} )." ;
             }
 
             if (IsQuestion)
             {
-                return Type + " => " + question.Title;
+                return $"{question.Title} ( {Type} ).";
             }
 
-            return null;
+            return "????";
         }
     }
 }

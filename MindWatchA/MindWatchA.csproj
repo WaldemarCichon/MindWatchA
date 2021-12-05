@@ -117,6 +117,10 @@
     <Compile Include="Attributes\LocalOnly.cs" />
     <Compile Include="UI\Fragments\SavedElementsFragment.cs" />
     <Compile Include="UI\ElementExplanationActivity.cs" />
+    <Compile Include="UI\Fragments\BadgesFragment.cs" />
+    <Compile Include="Tooling\BadgesViewCreator.cs" />
+    <Compile Include="Tooling\BadgeCalculation.cs" />
+    <Compile Include="Tooling\BadgeClassification.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -522,6 +526,10 @@
       <Generator></Generator>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\acitivity_element_explanation.xml">
+      <SubType></SubType>
+      <Generator></Generator>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\badge_fragment.xml">
       <SubType></SubType>
       <Generator></Generator>
     </AndroidResource>

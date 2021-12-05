@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.Json;
+using MindWatchA.Tooling;
 using MindWidgetA.StateMachine;
 
 namespace MindWidgetA.Tooling
@@ -236,5 +238,6 @@ namespace MindWidgetA.Tooling
         }
 
         internal static int Points => Global.points;
+        internal static List<BadgeClassification> Badges => BadgeCalculation.GetBadges(Global.points);
     }
 }

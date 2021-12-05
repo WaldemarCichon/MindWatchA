@@ -1,19 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
- 
-    <item
-        android:id="@+id/navigation_statistics"
-        android:icon="@drawable/chart"
-        android:title="Intormstion" />
-
-     <item
-        android:id="@+id/navigation_saved_items"
-        android:icon="@drawable/save_img"
-        android:title="Gemerkte Elemente"
-        />
-
-    <item
-        android:id="@+id/navigation_settings"
-        android:icon="@drawable/settings"
-        android:title="Einstellungen" />
+	<item android:id="@+id/navigation_statistics" android:icon="@drawable/chart" android:title="Intormstion" />
+	<item android:id="@+id/navigation_badges" android:icon="@drawable/badge" android:title="Auszeichnungen" />
+	<item android:id="@+id/navigation_saved_items" android:icon="@drawable/save_img" android:title="Gemerkte Elemente" />
+	<item android:id="@+id/navigation_settings" android:icon="@drawable/settings" android:title="Einstellungen" />
 </menu>

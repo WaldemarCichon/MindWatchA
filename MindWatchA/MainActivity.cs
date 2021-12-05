@@ -103,12 +103,15 @@ namespace MindWatchA
 
         void LoadFragment(int id)
         {
-            AndroidX.Fragment.App.Fragment  fragment = null;
+            AndroidX.Fragment.App.Fragment fragment = null;
             
             switch (id)
             {
                 case Resource.Id.navigation_statistics:
                     fragment = StatisticFragment.Instance;
+                    break;
+                case Resource.Id.navigation_badges:
+                    fragment = BadgesFragment.Instance;
                     break;
                 case Resource.Id.navigation_settings:
                     fragment = SettingsFragment.Instance;

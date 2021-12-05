@@ -45,6 +45,7 @@ namespace MindWatchA.UI.Fragments
             var description = element.Description;
             var intent = new Intent(this.Context, typeof(ElementExplanationActivity));
 
+            intent.PutExtra("type", element.Type);
             intent.PutExtra("title", title);
             intent.PutExtra("description", description);
             StartActivity(intent);
