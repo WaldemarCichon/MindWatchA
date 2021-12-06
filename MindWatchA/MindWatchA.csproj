@@ -121,6 +121,7 @@
     <Compile Include="Tooling\BadgesViewCreator.cs" />
     <Compile Include="Tooling\BadgeCalculation.cs" />
     <Compile Include="Tooling\BadgeClassification.cs" />
+    <Compile Include="Models\Single\Settings.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
