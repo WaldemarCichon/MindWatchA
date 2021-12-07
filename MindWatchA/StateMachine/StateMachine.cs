@@ -19,6 +19,7 @@ using MindWidgetA.UI;
 using Android.Content;
 using Android.Widget;
 using MindWatchA.Models.Collections;
+using MindWatchA.StateMachine;
 
 namespace MindWidgetA.StateMachine
 {
@@ -95,7 +96,7 @@ namespace MindWidgetA.StateMachine
         private static Timer greetingsTimer;
         private static Vibrator vibrator;
         private static AlarmManager alarmManager;
-
+        private AlarmManager greetingsAlarmManager;
         private StateTransitions GreetingsStateTransitions = new StateTransitions(States.GREETINGS).
             Add(new Transition(States.AFFIRMATION, Events.HappyButtonPressed, () => { return true; }, () => { Statistics.IncrementMindState(Events.HappyButtonPressed); sendAnswerAsync(MoodAnswerKind.good); setAffirmationState(TimeConstants.DURATION_GOOD); })).
             Add(new Transition(States.AFFIRMATION, Events.NeutralButtonPressed, () => { return true; }, () => { Statistics.IncrementMindState(Events.NeutralButtonPressed); sendAnswerAsync(MoodAnswerKind.neutral);  setAffirmationState(TimeConstants.DURATION_MIDDLE); })).
@@ -161,13 +162,20 @@ namespace MindWidgetA.StateMachine
             
         }
 
+
+        //TODO Probably implement greetings-alarm for a specified time.
+        //TODO Store Settings in (static) memory 
         private void createTimers()
         {
             timer = new Timer();
             timer.Elapsed += (object o, ElapsedEventArgs a) => { Xamarin.Essentials.MainThread.BeginInvokeOnMainThread(() => PushEvent(Events.TimeEllapsed)); timer.Interval = 0; };
             greetingsTimer = new Timer();
             greetingsTimer.Elapsed += (object sender, ElapsedEventArgs a) => { Xamarin.Essentials.MainThread.BeginInvokeOnMainThread(() => setGreetingsState()); greetingsTimer.Interval = 0; };
-            alarmManager = (AlarmManager) Context.GetSystemService(Android.Content.Context.AlarmService);
+            alarmManager = (AlarmManager) Context.GetSystemService(Context.AlarmService);
+            greetingsAlarmManager = (AlarmManager)Context.GetSystemService(Context.AlarmService);
+            var greetingIntent = new Intent(Context, typeof(AlarmReceiver));
+            var alarmIntent = PendingIntent.GetBroadcast(Context, 0, greetingIntent, 0);
+            greetingsAlarmManager.SetInexactRepeating(AlarmType.ElapsedRealtime, SystemClock.ElapsedRealtime() + 10000, 60 * 1000, alarmIntent);
         }
 
         private static void setTimer(int seconds)
