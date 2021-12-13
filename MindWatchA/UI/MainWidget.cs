@@ -19,6 +19,10 @@ namespace MindWidgetA.UI
 
         // private const String Logid = "de.cisoft.MindWidgetA.MainWidget";
         // for border: https://stackoverflow.com/questions/3496269/how-do-i-put-a-border-around-an-android-textview
+        // for restarting https://stackoverflow.com/questions/52193688/after-rebooting-or-upgrading-the-app-my-android-widget-stops-updating
+        // https://stackoverflow.com/questions/4011605/widget-not-showing-up-after-phone-restart
+        // https://developer.android.com/reference/android/appwidget/AppWidgetManager.html
+
 
         public const String HAPPY_BTN_CLICKED = "HappyButtonClicked";
         public const String NEUTRAL_BTN_CLICKED = "NeutralButtonClicked";
@@ -33,13 +37,20 @@ namespace MindWidgetA.UI
 
         public MainWidget()
         {
-
+            Console.WriteLine("=========> Widget - constructor called");
         }
 
         public override void OnRestored(Context context, int[] oldWidgetIds, int[] newWidgetIds)
         {
-            base.OnRestored(context, oldWidgetIds, newWidgetIds);
             Console.WriteLine("=====>>> Widget - on restored");
+            /**
+            base.OnRestored(context, oldWidgetIds, newWidgetIds);
+            var appWidgetManager = AppWidgetManager.GetInstance(context);
+            foreach (int id in newWidgetIds)
+            {
+                updateAppWidget(context, appWidgetManager, id);
+            }
+            */
         }
 
         public override void OnDeleted(Context context, int[] appWidgetIds)
@@ -60,6 +71,14 @@ namespace MindWidgetA.UI
         {
             base.OnEnabled(context);
             Console.WriteLine("=====>>>> Widget - on enabled");
+            var widget = new ComponentName(context, Java.Lang.Class.FromType(typeof(MainWidget)));
+            var appWidgetManager = AppWidgetManager.GetInstance(context);
+            var allIds = appWidgetManager.GetAppWidgetIds(widget);
+            Console.WriteLine("Starting service - building intent");
+            foreach (int id in allIds)
+            {
+                updateAppWidget(context, appWidgetManager, id);
+            }
         }
 
         static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId)

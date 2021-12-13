@@ -79,6 +79,11 @@ namespace MindWidgetA.StateMachine
             Console.WriteLine("Abstract UI created");
         }
 
+        internal void TimeElapsed(Events eventType)
+        {
+            stateMachine.PushEvent(eventType);
+        }
+
         internal void SetBaseData(RemoteViews remoteViews, ComponentName widget, AppWidgetManager appWidgetManager)
         {
             StateMachine.RemoteViews = remoteViews;

@@ -9,6 +9,7 @@ using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
+using Android.Text.Method;
 using Android.Views;
 using Android.Widget;
 using Selftastic_WS_Test.API;
@@ -27,6 +28,10 @@ namespace MindWatchA
         EditText password2EditText;
         RadioGroup genderRadioGroup;
         Button createUserButton;
+        private CheckBox confirmTermsOfServicesCheckox;
+        private CheckBox confirmPrivacyPolicyCheckbox;
+        private TextView privacyPolicyLinkTextView;
+        private TextView termsOfServicesLinkTextView;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -41,8 +46,22 @@ namespace MindWatchA
             password1EditText = FindViewById<EditText>(Resource.Id.password1);
             password2EditText = FindViewById<EditText>(Resource.Id.password2);
             createUserButton = FindViewById<Button>(Resource.Id.create_user);
+            createUserButton.Enabled = false;
             createUserButton.Click += createUserButtonClicked;
+            confirmTermsOfServicesCheckox = FindViewById<CheckBox>(Resource.Id.confirm_terms_of_services_checkbox);
+            confirmPrivacyPolicyCheckbox = FindViewById<CheckBox>(Resource.Id.confirm_privacy_policy_checkbox);
+            privacyPolicyLinkTextView = FindViewById<TextView>(Resource.Id.privacy_policy_link_textview);
+            termsOfServicesLinkTextView = FindViewById<TextView>(Resource.Id.terms_of_serices_link_textview);
+            privacyPolicyLinkTextView.MovementMethod = (LinkMovementMethod.Instance);
+            termsOfServicesLinkTextView.MovementMethod = (LinkMovementMethod.Instance);
+            confirmPrivacyPolicyCheckbox.CheckedChange += checkboxesCheckedChanged;
+            confirmTermsOfServicesCheckox.CheckedChange += checkboxesCheckedChanged;
             // Create your application here
+        }
+
+        private void checkboxesCheckedChanged (object sender, EventArgs args)
+        {
+            createUserButton.Enabled = confirmPrivacyPolicyCheckbox.Checked && confirmTermsOfServicesCheckox.Checked;
         }
 
         private async void createUserButtonClicked(object sender, EventArgs args)
@@ -84,6 +103,8 @@ namespace MindWatchA
             }
             user.password = password1EditText.Text;
             user.email = mailAddressEditText.Text;
+            user.accepted_gdpr = DateTime.Now;
+            user.accepted_tac = DateTime.Now;
             await ApiCall.AdminInstance.PostUser(user);
             user.Persist();
             StartActivity(typeof(MainActivity));

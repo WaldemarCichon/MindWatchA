@@ -14,6 +14,7 @@ using Android.Widget;
 using MindWatchA.Models.Single;
 using MindWatchA.Repository;
 using MindWatchA.Models.Collections;
+using MindWatchA.UI.Adapters;
 
 namespace MindWatchA.UI.Fragments
 {
@@ -32,7 +33,7 @@ namespace MindWatchA.UI.Fragments
         {
             base.OnViewCreated(view, savedInstanceState);
             savedElementsList = view.FindViewById<ListView>(Resource.Id.saved_items_list_view);
-            var adapter = new ArrayAdapter<SavedTaskQuestion>(view.Context, Android.Resource.Layout.SimpleListItem1);
+            var adapter = new SavedElementsAdapter(view.Context, Android.Resource.Layout.SimpleListItem1);
             adapter.AddAll(SavedTaskQuestions.Instance.positions);
             savedElementsList.Adapter = adapter;
             savedElementsList.ItemClick += SavedElementsList_ItemClick;

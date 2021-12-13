@@ -40,7 +40,7 @@ namespace MindWatchA.Tooling
                 var singleLayout = new LinearLayout(currentLayout.Context) { Orientation = Orientation.Vertical};
                 singleLayout.LayoutParameters = layoutParams;
                 var badgeView = new ImageView(singleLayout.Context);
-                badgeView.SetImageResource(Resource.Drawable.badge);
+                badgeView.SetImageResource(badge.ImageResource);
                 badgeView.SetForegroundGravity(Android.Views.GravityFlags.CenterHorizontal);
                 var text = new TextView(singleLayout.Context) { Text = badge.Description, TextSize=12};                
                 var textLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MatchParent, LinearLayout.LayoutParams.WrapContent);
