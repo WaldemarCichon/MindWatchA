@@ -19,6 +19,8 @@ namespace MindWidgetA.StateMachine
         BackButtonPressed,
         ChoosePressed,
         SyncButtonPressed,
-        LogoutButtonPressed
+        LogoutButtonPressed,
+        NotLoggedIn = LogoutButtonPressed,
+        LoggedIn
     }
 }

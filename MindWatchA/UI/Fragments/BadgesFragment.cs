@@ -24,7 +24,9 @@ namespace MindWatchA.UI.Fragments
     {
         private static readonly IFormatProvider formatProvider = CultureInfo.CreateSpecificCulture("de-DE");
 
-        public static Fragment Instance { get; } = new BadgesFragment();
+        private static Fragment instance;
+
+        public static Fragment Instance => instance == null ? instance = new BadgesFragment() : instance;
         private LinearLayout mainLayout;
 
         public override void OnCreate(Bundle savedInstanceState)
@@ -76,6 +78,11 @@ namespace MindWatchA.UI.Fragments
 
             //return base.OnCreateView(inflater, container, savedInstanceState);
             return inflater.Inflate(Resource.Layout.badge_fragment, container, false); 
+        }
+
+        public static void Clear()
+        {
+            instance = null;
         }
     }
 }

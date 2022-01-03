@@ -15,6 +15,8 @@ using Selftastic_WS_Test.Models.Single;
 using MindWatchA.UI.Fragments;
 using Google.Android.Material.BottomNavigation;
 using FloatingActionButton = Google.Android.Material.FloatingActionButton.FloatingActionButton;
+using Android.Appwidget;
+using MindWidgetA.UI;
 
 namespace MindWatchA
 {
@@ -54,7 +56,7 @@ namespace MindWatchA
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NTIwMTY3QDMxMzkyZTMzMmUzMFNUQjdXNVY5R3FJRDUrcnpZbDhaRTQxaloyMDZYMy9FL25FcE9uUDI5S2M9");
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NTU3MjM0QDMxMzkyZTM0MmUzMFlWM0R1bUZyam81K1lEdUxGNkVCVlVBYU1jRUl6N3QxdVlwTjNjZ21uM2c9");// "NTIwMTY3QDMxMzkyZTMzMmUzMFNUQjdXNVY5R3FJRDUrcnpZbDhaRTQxaloyMDZYMy9FL25FcE9uUDI5S2M9");
             Instance = this;
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             SetContentView(Resource.Layout.bottom_navigation);
@@ -64,9 +66,12 @@ namespace MindWatchA
                 PreviousInstance = this;
                 StartActivity(typeof(LoginActivity));
             }
-            var bottomnavigation = FindViewById<BottomNavigationView>(Resource.Id.navigation);
-            bottomnavigation.ItemSelected += (sender, args) => LoadFragment(args.Item.ItemId);
-            LoadFragment(Resource.Id.navigation_statistics);
+            BadgesFragment.Clear();
+            SettingsFragment.Clear();
+            StatisticFragment.Clear();
+            updateBottomNavigation();
+            updateWidget();
+
             // bottomnavigation.Selected
 
 #pragma warning disable CS0612 // Type or member is obsolete
@@ -74,6 +79,33 @@ namespace MindWatchA
 
 
             // Task.Run(async() => await ApiCall.Instance.TestLogin());
+        }
+
+        private void updateWidget()
+        {
+            var context = this;
+            AppWidgetManager man = AppWidgetManager.GetInstance(context);
+            ComponentName widget = new ComponentName(context, Java.Lang.Class.FromType(typeof(MainWidget)));
+            var ids = man.GetAppWidgetIds(widget);
+            Console.WriteLine($"{ids}, {ids.Length}");
+            var initIntent = new Intent();
+            initIntent.SetAction(AppWidgetManager.ActionAppwidgetUpdate);
+            initIntent.PutExtra("IDS", ids);
+            initIntent.PutExtra("DATA", "INIT");
+            context.SendBroadcast(initIntent);
+            var updateIntent = new Intent();
+            updateIntent.SetAction(AppWidgetManager.ActionAppwidgetUpdate);
+            updateIntent.PutExtra("IDS", ids);
+            updateIntent.PutExtra("DATA", "");
+            context.SendBroadcast(updateIntent);
+        }
+
+        public void updateBottomNavigation()
+        {
+            var bottomnavigation = FindViewById<BottomNavigationView>(Resource.Id.navigation);
+            bottomnavigation.SelectedItemId = 0;
+            bottomnavigation.ItemSelected += (sender, args) => LoadFragment(args.Item.ItemId);
+            LoadFragment(Resource.Id.navigation_statistics);
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)

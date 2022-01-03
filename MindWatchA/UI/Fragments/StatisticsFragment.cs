@@ -17,16 +17,20 @@ namespace MindWatchA.UI.Fragments
 {
     public class StatisticFragment : Fragment
     {
-        public static Fragment Instance { get; } = new StatisticFragment();
+        private static StatisticFragment instance;
+
+        public static Fragment Instance => instance == null ? instance = new StatisticFragment() : instance;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+            Console.WriteLine("in oncreate of StaticFragment");
             // Create your fragment here
         }
 
         public override void OnViewCreated(View view, Bundle savedInstanceState)
         {
+            Console.WriteLine("in onviewcreated of StaticFragment");
             base.OnViewCreated(view, savedInstanceState);
             var questionChart = new ChartUpdater(view.FindViewById<SfChart>(Resource.Id.sfChart1), ChartType.QuestionChart);
             var taskChart = new ChartUpdater(view.FindViewById<SfChart>(Resource.Id.sfChart2), ChartType.TaskChart);
@@ -43,11 +47,14 @@ namespace MindWatchA.UI.Fragments
         {
             // Use this to return your custom view for this Fragment
             // return inflater.Inflate(Resource.Layout.YourFragment, container, false);
-
+            Console.WriteLine("in oncreateview of StaticFragment");
             return inflater.Inflate(Resource.Layout.statistics_fragment, container, false);
         }
 
-
+        public static void Clear()
+        {
+            instance = null;
+        }
 
     }
 }

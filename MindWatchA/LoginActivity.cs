@@ -1,17 +1,14 @@
 ﻿
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 using Android.App;
-using Android.Content;
 using Android.OS;
-using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Selftastic_WS_Test.API;
 using Selftastic_WS_Test.Models.Single;
+
+using MindWidgetA.StateMachine;
 
 namespace MindWatchA
 {
@@ -80,6 +77,7 @@ namespace MindWatchA
             user.user_id = userId;
             user.test_mode = testModeCheckBox.Checked;
             user.Persist();
+            AbstractUI.Instance.Login();
             StartActivity(typeof(MainActivity));
         }
     }

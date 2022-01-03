@@ -12,6 +12,7 @@ namespace MindWidgetA.StateMachine
         INFO,
         TOO_LONG_WITHOUT_ANSWER,
         NIGHT,
-        CHOOSE_LATER
+        CHOOSE_LATER,
+        NOT_LOGGED_IN
     }
 }

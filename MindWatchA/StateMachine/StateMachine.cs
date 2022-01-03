@@ -99,8 +99,10 @@ namespace MindWidgetA.StateMachine
         private AlarmManager greetingsAlarmManager;
         private StateTransitions GreetingsStateTransitions = new StateTransitions(States.GREETINGS).
             Add(new Transition(States.AFFIRMATION, Events.HappyButtonPressed, () => { return true; }, () => { Statistics.IncrementMindState(Events.HappyButtonPressed); sendAnswerAsync(MoodAnswerKind.good); setAffirmationState(TimeConstants.DURATION_GOOD); })).
-            Add(new Transition(States.AFFIRMATION, Events.NeutralButtonPressed, () => { return true; }, () => { Statistics.IncrementMindState(Events.NeutralButtonPressed); sendAnswerAsync(MoodAnswerKind.neutral);  setAffirmationState(TimeConstants.DURATION_MIDDLE); })).
-            Add(new Transition(States.AFFIRMATION, Events.SadButtonPressed, () => { return true; }, () => { Statistics.IncrementMindState(Events.SadButtonPressed); sendAnswerAsync(MoodAnswerKind.bad); setAffirmationState(TimeConstants.DURATION_BAD); }));
+            Add(new Transition(States.AFFIRMATION, Events.NeutralButtonPressed, () => { return true; }, () => { Statistics.IncrementMindState(Events.NeutralButtonPressed); sendAnswerAsync(MoodAnswerKind.neutral); setAffirmationState(TimeConstants.DURATION_MIDDLE); })).
+            Add(new Transition(States.AFFIRMATION, Events.SadButtonPressed, () => { return true; }, () => { Statistics.IncrementMindState(Events.SadButtonPressed); sendAnswerAsync(MoodAnswerKind.bad); setAffirmationState(TimeConstants.DURATION_BAD); })).
+            Add(new Transition(States.NOT_LOGGED_IN, Events.NotLoggedIn, () => { return true; }, logout)).
+            Add(new Transition(States.NOT_LOGGED_IN, Events.LogoutButtonPressed, () => { return true; }, logout)); 
         private StateTransitions AffirmationStateTransistions = new StateTransitions(States.AFFIRMATION).
             Add(new Transition(States.QUESTION, Events.TimeEllapsed, () => { return LastQuestionTaskState == States.TASK; }, () => { setQuestionState(); })).
             Add(new Transition(States.TASK, Events.TimeEllapsed, () => { return LastQuestionTaskState == States.QUESTION; }, () => { setTaskState(); })).
@@ -123,7 +125,9 @@ namespace MindWidgetA.StateMachine
             Add(new Transition(States.AFFIRMATION, Events.YesButtonPressed, () => true, () => setAffirmationState(UseChosenDuration))).
             Add(new Transition(States.QUESTION, Events.NoButtonPressed, () => LastQuestionTaskState == States.QUESTION, () => setQuestionState())).
             Add(new Transition(States.TASK, Events.NoButtonPressed, () => LastQuestionTaskState == States.TASK, () => setTaskState()));
-
+        private StateTransitions NotLoggedInStateTransitions = new StateTransitions(States.NOT_LOGGED_IN).
+            Add(new Transition(States.GREETINGS, Events.LoggedIn, () => true, login)).
+            Add(new Transition(States.NOT_LOGGED_IN, Events.LogoutButtonPressed, () => { return true; }, logout));
 
 
         public StateMachine() { Instance = this; }
@@ -159,7 +163,7 @@ namespace MindWidgetA.StateMachine
             StateMap.Add(TaskStateTransistions);
             StateMap.Add(InfoStateTransisions);
             StateMap.Add(LaterChosenTransisions);
-            
+            StateMap.Add(NotLoggedInStateTransitions);
         }
 
 
@@ -371,6 +375,11 @@ namespace MindWidgetA.StateMachine
 
         }
 
+        private static void login()
+        {
+            
+        }
+
         private static void logout()
         {
             var prefix = System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments);
@@ -379,15 +388,30 @@ namespace MindWidgetA.StateMachine
             File.Delete(Path.Combine(prefix, "question.json"));
             File.Delete(Path.Combine(prefix, "affirmation.json"));
             File.Delete(Path.Combine(prefix, "statemachine.json"));
-            MainActivity.Instance.FinishAndRemoveTask();
+            if (MainActivity.Instance != null)
+            {
+                MainActivity.Instance?.FinishAndRemoveTask();
+            }
             if (MainActivity.PreviousInstance != null)
             {
                 MainActivity.PreviousInstance.FinishAndRemoveTask();
             }
+            UI.MainText.Text = "Benutzer nicht eingeloggt.\nBitte in der App einloggen.";
+            UI.HappyButton.Visibility = Android.Views.ViewStates.Gone;
+            UI.NeutralButton.Visibility = Android.Views.ViewStates.Gone;
+            UI.SadButton.Visibility = Android.Views.ViewStates.Gone;
+            var appWidgetManager = AppWidgetManager.GetInstance(Context.ApplicationContext);
+            ComponentName widget = new ComponentName(Context, Java.Lang.Class.FromType(typeof(MainWidget)));
+            appWidgetManager.UpdateAppWidget(widget, RemoteViews);
         }
 
         public void PushEvent(Events _event)
         {
+            if (User.Instance.fresh)
+            {
+                _event = Events.NotLoggedIn;
+            }
+            
             var newState = StateMap[CurrentState].PushEvent(_event);
             if (newState == States.NONE)
             {

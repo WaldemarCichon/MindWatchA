@@ -4,6 +4,7 @@ using Android.Content;
 using Android.Widget;
 using MindWatchA;
 using MindWidgetA.StateMachine.RemoteComponents;
+using Selftastic_WS_Test.Models.Single;
 
 namespace MindWidgetA.StateMachine
 {
@@ -77,11 +78,35 @@ namespace MindWidgetA.StateMachine
             pointsAmountText = new RemoteTextView(Resource.Id.points_amount_text);
             moneyIcon = new RemoteImageView(Resource.Id.money_icon);
             Console.WriteLine("Abstract UI created");
+            Console.WriteLine("User - Id: " + User.Instance.user_id + "fresh: " + User.Instance.fresh);
+
+            if (User.Instance.fresh)
+            {
+                try
+                {
+                    stateMachine.PushEvent(Events.NotLoggedIn);
+                    Console.WriteLine("Not Logged in");
+                } catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message + "\n");
+                    Console.WriteLine(ex.StackTrace + "\n");
+                } 
+            }
+
+            Console.WriteLine("Checked for user login");
+            Console.WriteLine("Address: " + base.ToString());
+        }
+
+        internal void Login()
+        {
+            stateMachine.PushEvent(Events.LoggedIn);
+            Console.WriteLine("Logged in");
         }
 
         internal void TimeElapsed(Events eventType)
         {
             stateMachine.PushEvent(eventType);
+            Console.WriteLine("TimeElapsed");
         }
 
         internal void SetBaseData(RemoteViews remoteViews, ComponentName widget, AppWidgetManager appWidgetManager)

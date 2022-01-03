@@ -27,6 +27,7 @@ namespace Selftastic_WS_Test.Models.Single
         public DateTime birthdate { get; set; } = DateTime.Now;
         public DateTime accepted_gdpr { get; set; } = DateTime.Now;
         public DateTime accepted_tac { get; set; } = DateTime.Now;
+        public bool fresh { get; set; }
 
         public User()
         {
@@ -50,6 +51,7 @@ namespace Selftastic_WS_Test.Models.Single
                     } else
                     {
                         instance = new User();
+                        instance.fresh = true;
                     }
                 }
                 return instance;
@@ -58,6 +60,7 @@ namespace Selftastic_WS_Test.Models.Single
 
         public void Persist()
         {
+            fresh = false;
             string path = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments), "user.json");
             using FileStream fileStream = File.Create(path);
             var serialized = JsonSerializer.Serialize(this);

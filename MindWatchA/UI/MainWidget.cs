@@ -131,7 +131,7 @@ namespace MindWidgetA.UI
             base.OnReceive(context, intent);
             Console.WriteLine("In OnReceive");
             Console.WriteLine(intent.Action, intent.Component);
-    
+            
 
             if (intent.Action.EndsWith("Clicked"))
             {
@@ -147,6 +147,11 @@ namespace MindWidgetA.UI
             Console.WriteLine(remoteViews);
             ComponentName widget = new ComponentName(context, Java.Lang.Class.FromType(typeof(MainWidget)));
             Console.WriteLine(widget);
+            if (intent.GetStringExtra("DATA") == "INIT") {
+                Console.WriteLine("Initializing");
+                AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(context);
+                OnUpdate(context, appWidgetManager, intent.GetIntArrayExtra("IDS"));
+            }
         }
 
 
