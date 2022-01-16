@@ -124,6 +124,8 @@
     <Compile Include="Models\Single\Settings.cs" />
     <Compile Include="StateMachine\AlarmReceiver.cs" />
     <Compile Include="UI\Adapters\SavedElementsAdapter.cs" />
+    <Compile Include="Tooling\RollbarHelper.cs" />
+    <Compile Include="Tooling\CrashActivity.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -580,6 +582,10 @@
       <SubType></SubType>
       <Generator></Generator>
     </AndroidResource>
+    <AndroidResource Include="Resources\layout\crash_activity_layout.xml">
+      <SubType></SubType>
+      <Generator></Generator>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\drawable\" />
@@ -628,7 +634,10 @@
       <Version>28.0.0.3</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.Xamarin.SfChart.Android">
-      <Version>19.4.0.40</Version>
+      <Version>19.4.0.42</Version>
+    </PackageReference>
+    <PackageReference Include="Rollbar">
+      <Version>4.0.3</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />

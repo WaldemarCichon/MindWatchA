@@ -2,11 +2,12 @@
 using Android.App;
 using Android.Appwidget;
 using Android.Content;
+using Android.Runtime;
 using Android.Widget;
+using MindWidgetA;
 using MindWidgetA.StateMachine;
 using MindWidgetA.UI;
-
-
+using Rollbar;
 
 namespace MindWatchA.Services
 {
@@ -24,6 +25,7 @@ namespace MindWatchA.Services
 
         public static ServiceSingleton Instance(Context context)
         {
+
             if (instance == null)
             {
                 instance = new ServiceSingleton(context);
@@ -39,6 +41,15 @@ namespace MindWatchA.Services
         private ServiceSingleton(Context context)
         {
             Init(context);
+            RollbarLocator.RollbarInstance.Configure(new RollbarConfig("904e61ade59142b5bb6784b35767c269"));
+            RollbarLocator.RollbarInstance.Info("Mindwidget - Widget wurde gestartet");
+            RollbarHelper.RegisterForGlobalExceptionHandling();
+
+            AndroidEnvironment.UnhandledExceptionRaiser += (sender, args) =>
+            {
+                var newExc = new ApplicationException("AndroidEnvironment_UnhandledExceptionRaiser", args.Exception);
+                RollbarLocator.RollbarInstance.AsBlockingLogger(TimeSpan.FromSeconds(10)).Critical(newExc);
+            };
         }
 
         public void ButtonClicked(string buttonAction)

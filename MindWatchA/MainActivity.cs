@@ -17,6 +17,9 @@ using Google.Android.Material.BottomNavigation;
 using FloatingActionButton = Google.Android.Material.FloatingActionButton.FloatingActionButton;
 using Android.Appwidget;
 using MindWidgetA.UI;
+using Rollbar;
+using MindWidgetA;
+using MindWatchA.Tooling;
 
 namespace MindWatchA
 {
@@ -26,6 +29,7 @@ namespace MindWatchA
     {
         public static MainActivity Instance { get; private set; }
         public static MainActivity PreviousInstance { get; private set; }
+        public static Exception Exception { get; set; }
 
         private User user;
 
@@ -56,8 +60,30 @@ namespace MindWatchA
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NTU3MjM0QDMxMzkyZTM0MmUzMFlWM0R1bUZyam81K1lEdUxGNkVCVlVBYU1jRUl6N3QxdVlwTjNjZ21uM2c9");// "NTIwMTY3QDMxMzkyZTMzMmUzMFNUQjdXNVY5R3FJRDUrcnpZbDhaRTQxaloyMDZYMy9FL25FcE9uUDI5S2M9");
             Instance = this;
+
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NTU3MjM0QDMxMzkyZTM0MmUzMFlWM0R1bUZyam81K1lEdUxGNkVCVlVBYU1jRUl6N3QxdVlwTjNjZ21uM2c9");// "NTIwMTY3QDMxMzkyZTMzMmUzMFNUQjdXNVY5R3FJRDUrcnpZbDhaRTQxaloyMDZYMy9FL25FcE9uUDI5S2M9");
+
+            RollbarLocator.RollbarInstance.Configure(new RollbarConfig("904e61ade59142b5bb6784b35767c269"));
+            RollbarLocator.RollbarInstance.Info("Mindwidget wurde gestartet");
+            //RollbarHelper.ConfigureRollbarSingleton();
+
+            // Registers for global exception handling.
+            RollbarHelper.RegisterForGlobalExceptionHandling();
+
+            AndroidEnvironment.UnhandledExceptionRaiser += (sender, args) =>
+            {
+                var newExc = new ApplicationException("AndroidEnvironment_UnhandledExceptionRaiser", args.Exception);
+                RollbarLocator.RollbarInstance.AsBlockingLogger(TimeSpan.FromSeconds(10)).Critical(newExc);
+
+                Exception = newExc;
+                StartActivity(typeof(CrashActivity));
+            };
+
+            //var a = 0;
+            //var b = 1;
+            //var c = b / a;
+
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             SetContentView(Resource.Layout.bottom_navigation);
             user = User.Instance;
