@@ -20,6 +20,7 @@ using Android.Content;
 using Android.Widget;
 using MindWatchA.Models.Collections;
 using MindWatchA.StateMachine;
+using Rollbar;
 
 namespace MindWidgetA.StateMachine
 {
@@ -277,7 +278,7 @@ namespace MindWidgetA.StateMachine
             UI.OkButton.Visibility = Android.Views.ViewStates.Gone;
             UI.NoButton.Visibility = Android.Views.ViewStates.Gone;
             UI.BackButton.Visibility = Android.Views.ViewStates.Gone;
-            UI.InfoButton.Visibility = Android.Views.ViewStates.Visible;
+            // UI.InfoButton.Visibility = Android.Views.ViewStates.Visible;
             UI.MainText.Visibility = Android.Views.ViewStates.Visible;
             UI.Background.SetImageResource(Resource.Drawable.affirmation_background);
             UI.MainText.Text = Affirmations.Instance.NewRandom.Output;
@@ -415,6 +416,7 @@ namespace MindWidgetA.StateMachine
             var newState = StateMap[CurrentState].PushEvent(_event);
             if (newState == States.NONE)
             {
+                RollbarLocator.RollbarInstance.AsBlockingLogger(new TimeSpan(0, 0, 30)).Critical($"newState = NONE, currentState = {CurrentState.ToString()}, Event = {_event.ToString()}");
                 Console.WriteLine("New State was NONE");
                 newState = States.GREETINGS;
                 setGreetingsState();

@@ -53,7 +53,10 @@ namespace MindWatchA.Tooling
                 singleLayout.AddView(badgeView);
                 currentLayout.AddView(singleLayout);
             }
-            mainLayout.AddView(currentLayout);
+            if (currentLayout != null)
+            {
+                mainLayout.AddView(currentLayout);
+            }
             View.AddView(mainLayout);
         }
     }

@@ -66,6 +66,7 @@ namespace MindWatchA
 
         private async void createUserButtonClicked(object sender, EventArgs args)
         {
+
             if (password1EditText.Text != password2EditText.Text)
             {
                 var alert = new AlertDialog.Builder(this);
@@ -85,13 +86,15 @@ namespace MindWatchA
                 case Resource.Id.male: user.gender = "male"; break;
                 case Resource.Id.female: user.gender = "female"; break;
                 case Resource.Id.divers: user.gender = "divers"; break;
-                case Resource.Id.none: user.gender = "none";break;
+                case Resource.Id.none: user.gender = "none"; break;
 
             }
             try
             {
+                birthDateEditText.Text = birthDateEditText.Text.Replace(",", ".");
                 DateTime.ParseExact(birthDateEditText.Text, "dd.MM.yyyy", CultureInfo.GetCultureInfo("de-DE"));
-            } catch (Exception)
+            }
+            catch (Exception)
             {
                 var alert = new AlertDialog.Builder(this);
                 alert.SetTitle("Geburtsdatum");
@@ -105,9 +108,21 @@ namespace MindWatchA
             user.email = mailAddressEditText.Text;
             user.accepted_gdpr = DateTime.Now;
             user.accepted_tac = DateTime.Now;
-            await ApiCall.AdminInstance.PostUser(user);
-            user.Persist();
-            StartActivity(typeof(MainActivity));
+            var answer = await ApiCall.AdminInstance.PostUser(user);
+            if (answer)
+            {
+                FinishAffinity();
+            }
+            else
+            {
+                var alert = new AlertDialog.Builder(this);
+                alert.SetTitle("Email-Adresse bereits vorhanden");
+                alert.SetMessage("Die von Ihnen eingegebene Email-Adresse\nexistiert bereits im System.\nWahlweise bitte einloggen mit der passenden Adresse oder\neine andere Adresse benutzen.");
+                Dialog dialog = null;
+                alert.SetNeutralButton("OK", (sender, eventArgs) => { dialog.Dismiss(); });
+                (dialog = alert.Create()).Show();
+                return;
+            }
         }
     }
 }
