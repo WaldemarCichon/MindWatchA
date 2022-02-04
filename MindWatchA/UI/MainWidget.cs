@@ -8,6 +8,7 @@ using MindWatchA;
 using MindWatchA.Services;
 using MindWidgetA.StateMachine;
 using MindWidgetA.StateMachine.RemoteComponents;
+using Rollbar;
 
 namespace MindWidgetA.UI
 {
@@ -43,6 +44,7 @@ namespace MindWidgetA.UI
         public override void OnRestored(Context context, int[] oldWidgetIds, int[] newWidgetIds)
         {
             Console.WriteLine("=====>>> Widget - on restored");
+            RollbarLocator.RollbarInstance.Log(ErrorLevel.Debug, "Widget - on restored");
             /**
             base.OnRestored(context, oldWidgetIds, newWidgetIds);
             var appWidgetManager = AppWidgetManager.GetInstance(context);
@@ -59,6 +61,7 @@ namespace MindWidgetA.UI
             Intent intent = new Intent(context.ApplicationContext, typeof(MainService));
             context.StopService(intent);
             Console.WriteLine("====>>>> Widget - on deleted");
+            RollbarLocator.RollbarInstance.Debug("Widget - on deleted");
         }
 
         public override void OnAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager, int appWidgetId, Bundle newOptions)
@@ -71,6 +74,7 @@ namespace MindWidgetA.UI
         {
             base.OnEnabled(context);
             Console.WriteLine("=====>>>> Widget - on enabled");
+            RollbarLocator.RollbarInstance.Debug("Widget - on enabled");
             var widget = new ComponentName(context, Java.Lang.Class.FromType(typeof(MainWidget)));
             var appWidgetManager = AppWidgetManager.GetInstance(context);
             var allIds = appWidgetManager.GetAppWidgetIds(widget);
@@ -83,6 +87,7 @@ namespace MindWidgetA.UI
 
         static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId)
         {
+            RollbarLocator.RollbarInstance.Debug("Widget - update widget");
             var views = new RemoteViews(context.PackageName, Resource.Layout.widget_main);
             views.SetOnClickPendingIntent(Resource.Id.info_widget, GetPendingSelfIntent(context, INFO_BTN_CLICKED));
             views.SetOnClickPendingIntent(Resource.Id.happy_widget, GetPendingSelfIntent(context, HAPPY_BTN_CLICKED));
@@ -105,6 +110,7 @@ namespace MindWidgetA.UI
 
         public override void OnUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
         {
+            RollbarLocator.RollbarInstance.Debug("Widget - on update");
             Console.WriteLine("Update started");
             Console.WriteLine("Context = " + context);
             var widget = new ComponentName(context, Java.Lang.Class.FromType(typeof(MainWidget)));
@@ -128,6 +134,7 @@ namespace MindWidgetA.UI
         }
 
         public override void OnReceive(Context context, Intent intent) {
+            RollbarLocator.RollbarInstance.Debug("Widget - on receive: "+intent.ToString());
             base.OnReceive(context, intent);
             Console.WriteLine("In OnReceive");
             Console.WriteLine(intent.Action, intent.Component);

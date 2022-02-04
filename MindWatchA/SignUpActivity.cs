@@ -111,7 +111,14 @@ namespace MindWatchA
             var answer = await ApiCall.AdminInstance.PostUser(user);
             if (answer)
             {
+                var alert = new AlertDialog.Builder(this);
+                alert.SetTitle("App wird beendet");
+                alert.SetMessage("App wird jetzt beendet. Bitte starten und einloggen.");
+                Dialog dialog = null;
+                alert.SetNeutralButton("OK", (sender, eventArgs) => { dialog.Dismiss(); });
+                (dialog = alert.Create()).Show();
                 FinishAffinity();
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             else
             {

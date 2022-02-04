@@ -103,19 +103,23 @@ namespace MindWidgetA.StateMachine
             Add(new Transition(States.AFFIRMATION, Events.NeutralButtonPressed, () => { return true; }, () => { Statistics.IncrementMindState(Events.NeutralButtonPressed); sendAnswerAsync(MoodAnswerKind.neutral); setAffirmationState(TimeConstants.DURATION_MIDDLE); })).
             Add(new Transition(States.AFFIRMATION, Events.SadButtonPressed, () => { return true; }, () => { Statistics.IncrementMindState(Events.SadButtonPressed); sendAnswerAsync(MoodAnswerKind.bad); setAffirmationState(TimeConstants.DURATION_BAD); })).
             Add(new Transition(States.NOT_LOGGED_IN, Events.NotLoggedIn, () => { return true; }, logout)).
-            Add(new Transition(States.NOT_LOGGED_IN, Events.LogoutButtonPressed, () => { return true; }, logout)); 
+            Add(new Transition(States.NOT_LOGGED_IN, Events.LogoutButtonPressed, () => { return true; }, logout)).
+            Add(new Transition(States.GREETINGS, Events.MiddayReached, () => { return false; }, () => { setGreetingsState(); })); 
         private StateTransitions AffirmationStateTransistions = new StateTransitions(States.AFFIRMATION).
             Add(new Transition(States.QUESTION, Events.TimeEllapsed, () => { return LastQuestionTaskState == States.TASK; }, () => { setQuestionState(); })).
             Add(new Transition(States.TASK, Events.TimeEllapsed, () => { return LastQuestionTaskState == States.QUESTION; }, () => { setTaskState(); })).
-            Add(new Transition(States.INFO, Events.InfoButtonPressed, () => { return true; }, () => { setInfoState(); }));
+            Add(new Transition(States.INFO, Events.InfoButtonPressed, () => { return true; }, () => { setInfoState(); })).
+            Add(new Transition(States.GREETINGS, Events.MiddayReached, () => { return true; }, () => { setGreetingsState(); })) ;
         private StateTransitions TaskStateTransistions = new StateTransitions(States.TASK).
             Add(new Transition(States.AFFIRMATION, Events.YesButtonPressed, () => { return true; }, () => { setTaskAnswer(true); })).
             Add(new Transition(States.AFFIRMATION, Events.NoButtonPressed, () => { return true; }, () => { setTaskAnswer(false); })).
-            Add(new Transition(States.AFFIRMATION, Events.ChooseLaterPressed, () => { return true; }, saveTaskQuestions));
+            Add(new Transition(States.AFFIRMATION, Events.ChooseLaterPressed, () => { return true; }, saveTaskQuestions)).
+            Add(new Transition(States.GREETINGS, Events.MiddayReached, () => { return true; }, () => { setGreetingsState(); }));
         private StateTransitions QuestionStateTransitions = new StateTransitions(States.QUESTION).
             Add(new Transition(States.AFFIRMATION, Events.YesButtonPressed, () => { return true; }, () => { setQuestionAnswer(true); })).
             Add(new Transition(States.AFFIRMATION, Events.NoButtonPressed, () => { return true; }, () => { setQuestionAnswer(false); })).
-            Add(new Transition(States.AFFIRMATION, Events.ChooseLaterPressed, () => { return true; }, saveTaskQuestions));
+            Add(new Transition(States.AFFIRMATION, Events.ChooseLaterPressed, () => { return true; }, saveTaskQuestions)).
+            Add(new Transition(States.GREETINGS, Events.MiddayReached, () => { return true; }, () => { setGreetingsState(); }));
         private StateTransitions InfoStateTransisions = new StateTransitions(States.INFO).
             Add(new Transition(States.AFFIRMATION, Events.BackButtonPressed, () => { return true; }, () => { setAffirmationState(DoNotChangeTimer); })).
             Add(new Transition(States.QUESTION, Events.TimeEllapsed, () => LastQuestionTaskState == States.TASK /* ^ laterChosen*/, () => { setQuestionState(); })).
@@ -128,7 +132,8 @@ namespace MindWidgetA.StateMachine
             Add(new Transition(States.TASK, Events.NoButtonPressed, () => LastQuestionTaskState == States.TASK, () => setTaskState()));
         private StateTransitions NotLoggedInStateTransitions = new StateTransitions(States.NOT_LOGGED_IN).
             Add(new Transition(States.GREETINGS, Events.LoggedIn, () => true, login)).
-            Add(new Transition(States.NOT_LOGGED_IN, Events.LogoutButtonPressed, () => { return true; }, logout));
+            Add(new Transition(States.NOT_LOGGED_IN, Events.LogoutButtonPressed, () => { return true; }, logout)).
+            Add(new Transition(States.NOT_LOGGED_IN, Events.MiddayReached, () => { return false; }, () => { }));
 
 
         public StateMachine() { Instance = this; }
@@ -248,6 +253,7 @@ namespace MindWidgetA.StateMachine
             UI.PointsAmountText.Visibility = Android.Views.ViewStates.Gone;
             UI.MoneyIcon.Visibility = Android.Views.ViewStates.Gone;
             UI.Background.SetImageResource(Resource.Drawable.mindset_background);
+            UI.MainText.Text = User.Instance.fresh ? "Bitte vor Benutzung anmelden" : "Guten Morgen\n\nWie fühlst Du dich heute, mein lieber";
             sendAnswerAsync(Selftastic_WS_Test.Enums.MoodAnswerKind.shown);
             setGreetingsTimer(TimeConstants.SecondsToNextGreeting);
             Console.WriteLine("SetGreetingsState finished");
@@ -290,7 +296,7 @@ namespace MindWidgetA.StateMachine
             Affirmations.Instance.SendAnswer(Selftastic_WS_Test.Enums.AnswerKind.shown);
         }
 
-        private static void setQuestionTaskState(string random, int backgroundPicId)
+        private static void setQuestionTaskState(string random = null, int backgroundPicId = -1)
         {
             UI.InfoButton.Visibility = Android.Views.ViewStates.Gone;
             UI.OkButton.Visibility = Android.Views.ViewStates.Visible;
@@ -302,7 +308,10 @@ namespace MindWidgetA.StateMachine
             UI.SyncButton.Visibility = Android.Views.ViewStates.Gone;
             UI.LogoutButton.Visibility = Android.Views.ViewStates.Gone;
             // UI.backgroundImageView.SetImageResource(backgroundPicId);
-            UI.MainText.Text = random;
+            if (random != null)
+            {
+                UI.MainText.Text = random;
+            }
             UI.PointsAmountText.Text = Statistics.Points.ToString("#,##0");
             laterChosen = false;
         }
@@ -404,13 +413,46 @@ namespace MindWidgetA.StateMachine
             var appWidgetManager = AppWidgetManager.GetInstance(Context.ApplicationContext);
             ComponentName widget = new ComponentName(Context, Java.Lang.Class.FromType(typeof(MainWidget)));
             appWidgetManager.UpdateAppWidget(widget, RemoteViews);
+            var ids = appWidgetManager.GetAppWidgetIds(widget);
+            var updateIntent = new Intent();
+            updateIntent.SetAction(AppWidgetManager.ActionAppwidgetUpdate);
+            updateIntent.PutExtra("IDS", ids);
+            updateIntent.PutExtra("DATA", "");
+            Context.SendBroadcast(updateIntent);
+        }
+
+        public void setState(States newState)
+        {
+            switch (newState)
+            {
+                case States.GREETINGS: setGreetingsState(); break;
+                case States.AFFIRMATION: setAffirmationState(UseChosenDuration); break;
+                case States.QUESTION:
+                case States.TASK: setQuestionTaskState(); break;
+            }
+        }
+
+        private void logIn()
+        {
+            if (User.Instance.fresh)
+            {
+                logout();
+                return;
+            }
+            setGreetingsState();
         }
 
         public void PushEvent(Events _event)
         {
-            if (User.Instance.fresh)
+            if (_event == Events.LoggedIn)
             {
-                _event = Events.NotLoggedIn;
+                logIn();
+                return;
+            }
+            if (User.Instance.fresh || _event == Events.LogoutButtonPressed || _event == Events.NotLoggedIn)
+            {
+                logout();
+                return;
             }
             
             var newState = StateMap[CurrentState].PushEvent(_event);
@@ -418,8 +460,8 @@ namespace MindWidgetA.StateMachine
             {
                 RollbarLocator.RollbarInstance.AsBlockingLogger(new TimeSpan(0, 0, 30)).Critical($"newState = NONE, currentState = {CurrentState.ToString()}, Event = {_event.ToString()}");
                 Console.WriteLine("New State was NONE");
-                newState = States.GREETINGS;
-                setGreetingsState();
+                newState = CurrentState; // States.GREETINGS;
+                setState(newState);
             }
             if (newState != States.NONE)
             {

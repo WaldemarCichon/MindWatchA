@@ -16,6 +16,7 @@ using System.Globalization;
 using AndroidX.AppCompat.App;
 using Selftastic_WS_Test.Models.Single;
 using MindWatchA.Models.Single;
+using MindWidgetA.StateMachine;
 
 namespace MindWatchA.UI.Fragments
 {
@@ -90,6 +91,7 @@ namespace MindWatchA.UI.Fragments
         protected void logoutButtonClicked(object sender, EventArgs args)
         {
             User.Remove();
+            AbstractUI.Instance.InformAboutLogout();
             Intent intent = new Intent(this.Activity, typeof(LoginActivity));
             
             StartActivity(intent);

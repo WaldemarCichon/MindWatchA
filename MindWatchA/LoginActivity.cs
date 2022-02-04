@@ -9,6 +9,9 @@ using Selftastic_WS_Test.API;
 using Selftastic_WS_Test.Models.Single;
 
 using MindWidgetA.StateMachine;
+using Android.Appwidget;
+using Android.Content;
+using MindWidgetA.UI;
 
 namespace MindWatchA
 {
@@ -48,6 +51,19 @@ namespace MindWatchA
             StartActivity(typeof(SignUpActivity));
         }
 
+        private void refreshWidget()
+        {
+            AbstractUI.Instance.InformAboutLogin();
+            AppWidgetManager man = AppWidgetManager.GetInstance(this);
+            ComponentName widget = new ComponentName(this, Java.Lang.Class.FromType(typeof(MainWidget)));
+            var ids = man.GetAppWidgetIds(widget);
+            Console.WriteLine($"{ids}, {ids.Length}");
+            var updateIntent = new Intent();
+            updateIntent.SetAction(AppWidgetManager.ActionAppwidgetUpdate);
+            updateIntent.PutExtra("IDS", ids);
+            updateIntent.PutExtra("DATA", "");
+        }
+
         private async void loginClicked(object sender, EventArgs args)
         {
             if (mailAddress.Text == "" || password.Text == "")
@@ -78,6 +94,7 @@ namespace MindWatchA
             user.test_mode = testModeCheckBox.Checked;
             user.Persist();
             AbstractUI.Instance.Login();
+            refreshWidget();
             StartActivity(typeof(MainActivity));
         }
     }

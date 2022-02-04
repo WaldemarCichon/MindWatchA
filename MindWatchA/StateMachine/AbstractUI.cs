@@ -97,10 +97,21 @@ namespace MindWidgetA.StateMachine
             Console.WriteLine("Address: " + base.ToString());
         }
 
+        internal void InformAboutLogin()
+        {
+            Login();
+        }
+
         internal void Login()
         {
             stateMachine.PushEvent(Events.LoggedIn);
             Console.WriteLine("Logged in");
+        }
+
+        internal void InformAboutLogout()
+        {
+            stateMachine.PushEvent(Events.LogoutButtonPressed);
+            Console.WriteLine("Logged out");
         }
 
         internal void TimeElapsed(Events eventType)

@@ -17,7 +17,7 @@
 		android:layout_marginBottom="30px"
 		android:layout_marginTop="20px"/>
 		<TextView
-		android:text="Version 1.1.9"
+		android:text="Version 1.1.10"
 		android:textAppearance="?android:attr/textAppearanceLarge"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
