@@ -70,8 +70,9 @@ namespace MindWidgetA.StateMachine
                     Xamarin.Essentials.MainThread.BeginInvokeOnMainThread(() => remoteTextView.Text = value);
                     Console.WriteLine("CurrentValue" + remoteTextView.Text);
                     var remoteViews = remoteTextView.RemoteViews;
+                    remoteViews.SetTextViewText(remoteTextViewId, value);
                     var context = Application.Context;
-                    // var remoteViews = new RemoteViews(context.PackageName, Resource.Layout.widget_main);
+                    remoteViews = new RemoteViews(context.PackageName, Resource.Layout.widget_main);
                     remoteViews.SetTextViewText(remoteTextViewId, value);
                     var appWidgetManager = AppWidgetManager.GetInstance(context);
                     ComponentName widget = new ComponentName(context, Java.Lang.Class.FromType(typeof(MainWidget)));

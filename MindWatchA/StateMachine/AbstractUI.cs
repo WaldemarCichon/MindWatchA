@@ -3,6 +3,7 @@ using Android.Appwidget;
 using Android.Content;
 using Android.Widget;
 using MindWatchA;
+using MindWatchA.Tooling;
 using MindWidgetA.StateMachine.RemoteComponents;
 using Selftastic_WS_Test.Models.Single;
 
@@ -111,6 +112,7 @@ namespace MindWidgetA.StateMachine
         internal void InformAboutLogout()
         {
             stateMachine.PushEvent(Events.LogoutButtonPressed);
+            Logger.Info("Logout from UI");
             Console.WriteLine("Logged out");
         }
 

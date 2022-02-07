@@ -20,7 +20,7 @@ using Android.Content;
 using Android.Widget;
 using MindWatchA.Models.Collections;
 using MindWatchA.StateMachine;
-using Rollbar;
+using MindWatchA.Tooling;
 
 namespace MindWidgetA.StateMachine
 {
@@ -387,17 +387,24 @@ namespace MindWidgetA.StateMachine
 
         private static void login()
         {
-            
+            User.Instance.Reload();
+            CurrentState = States.GREETINGS;
+            Instance.Persist();
+            setGreetingsState();
         }
 
         private static void logout()
         {
+            CurrentState = States.NOT_LOGGED_IN;
+            Instance.Persist();
             var prefix = System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments);
             File.Delete(Path.Combine(prefix, "user.json"));
             File.Delete(Path.Combine(prefix, "task.json"));
             File.Delete(Path.Combine(prefix, "question.json"));
             File.Delete(Path.Combine(prefix, "affirmation.json"));
             File.Delete(Path.Combine(prefix, "statemachine.json"));
+            User.Instance.Reload();
+            Statistics.Clear();
             if (MainActivity.Instance != null)
             {
                 MainActivity.Instance?.FinishAndRemoveTask();
@@ -410,6 +417,9 @@ namespace MindWidgetA.StateMachine
             UI.HappyButton.Visibility = Android.Views.ViewStates.Gone;
             UI.NeutralButton.Visibility = Android.Views.ViewStates.Gone;
             UI.SadButton.Visibility = Android.Views.ViewStates.Gone;
+            UI.OkButton.Visibility = Android.Views.ViewStates.Gone;
+            UI.NoButton.Visibility = Android.Views.ViewStates.Gone;
+            /*
             var appWidgetManager = AppWidgetManager.GetInstance(Context.ApplicationContext);
             ComponentName widget = new ComponentName(Context, Java.Lang.Class.FromType(typeof(MainWidget)));
             appWidgetManager.UpdateAppWidget(widget, RemoteViews);
@@ -418,7 +428,7 @@ namespace MindWidgetA.StateMachine
             updateIntent.SetAction(AppWidgetManager.ActionAppwidgetUpdate);
             updateIntent.PutExtra("IDS", ids);
             updateIntent.PutExtra("DATA", "");
-            Context.SendBroadcast(updateIntent);
+            Context.SendBroadcast(updateIntent);*/
         }
 
         public void setState(States newState)
@@ -446,11 +456,13 @@ namespace MindWidgetA.StateMachine
         {
             if (_event == Events.LoggedIn)
             {
+                Logger.Info($"LoggedIn: User = {User.Instance} currentState = {CurrentState.ToString()}, Event = {_event.ToString()}");
                 logIn();
                 return;
             }
             if (User.Instance.fresh || _event == Events.LogoutButtonPressed || _event == Events.NotLoggedIn)
             {
+                Logger.Info($"logging out: User = {User.Instance}  currentState = {CurrentState.ToString()}, Event = {_event.ToString()}");
                 logout();
                 return;
             }
@@ -458,7 +470,7 @@ namespace MindWidgetA.StateMachine
             var newState = StateMap[CurrentState].PushEvent(_event);
             if (newState == States.NONE)
             {
-                RollbarLocator.RollbarInstance.AsBlockingLogger(new TimeSpan(0, 0, 30)).Critical($"newState = NONE, currentState = {CurrentState.ToString()}, Event = {_event.ToString()}");
+                Logger.Error($"newState = NONE, currentState = {CurrentState.ToString()}, Event = {_event.ToString()}");
                 Console.WriteLine("New State was NONE");
                 newState = CurrentState; // States.GREETINGS;
                 setState(newState);

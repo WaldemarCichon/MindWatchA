@@ -6,6 +6,7 @@ using Android.OS;
 using Android.Widget;
 using MindWatchA;
 using MindWatchA.Services;
+using MindWatchA.Tooling;
 using MindWidgetA.StateMachine;
 using MindWidgetA.StateMachine.RemoteComponents;
 using Rollbar;
@@ -39,12 +40,14 @@ namespace MindWidgetA.UI
         public MainWidget()
         {
             Console.WriteLine("=========> Widget - constructor called");
+            RollbarLocator.RollbarInstance.Configure(new RollbarConfig("904e61ade59142b5bb6784b35767c269"));
+            Logger.Debug("Widget constructor called");
         }
 
         public override void OnRestored(Context context, int[] oldWidgetIds, int[] newWidgetIds)
         {
             Console.WriteLine("=====>>> Widget - on restored");
-            RollbarLocator.RollbarInstance.Log(ErrorLevel.Debug, "Widget - on restored");
+            Logger.Log(ErrorLevel.Debug, "Widget - on restored");
             /**
             base.OnRestored(context, oldWidgetIds, newWidgetIds);
             var appWidgetManager = AppWidgetManager.GetInstance(context);
@@ -61,20 +64,21 @@ namespace MindWidgetA.UI
             Intent intent = new Intent(context.ApplicationContext, typeof(MainService));
             context.StopService(intent);
             Console.WriteLine("====>>>> Widget - on deleted");
-            RollbarLocator.RollbarInstance.Debug("Widget - on deleted");
+            Logger.Debug("Widget - on deleted");
         }
 
         public override void OnAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager, int appWidgetId, Bundle newOptions)
         {
             base.OnAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions);
             Console.WriteLine("====>>> Widget - on options changed");
+            Logger.Debug("Widget - on optionChanged");
         }
 
         public override void OnEnabled(Context context)
         {
             base.OnEnabled(context);
             Console.WriteLine("=====>>>> Widget - on enabled");
-            RollbarLocator.RollbarInstance.Debug("Widget - on enabled");
+            Logger.Debug("Widget - on enabled");
             var widget = new ComponentName(context, Java.Lang.Class.FromType(typeof(MainWidget)));
             var appWidgetManager = AppWidgetManager.GetInstance(context);
             var allIds = appWidgetManager.GetAppWidgetIds(widget);
@@ -87,7 +91,7 @@ namespace MindWidgetA.UI
 
         static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId)
         {
-            RollbarLocator.RollbarInstance.Debug("Widget - update widget");
+            Logger.Debug("Widget - update widget");
             var views = new RemoteViews(context.PackageName, Resource.Layout.widget_main);
             views.SetOnClickPendingIntent(Resource.Id.info_widget, GetPendingSelfIntent(context, INFO_BTN_CLICKED));
             views.SetOnClickPendingIntent(Resource.Id.happy_widget, GetPendingSelfIntent(context, HAPPY_BTN_CLICKED));
@@ -110,7 +114,7 @@ namespace MindWidgetA.UI
 
         public override void OnUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
         {
-            RollbarLocator.RollbarInstance.Debug("Widget - on update");
+            Logger.Debug("Widget - on update");
             Console.WriteLine("Update started");
             Console.WriteLine("Context = " + context);
             var widget = new ComponentName(context, Java.Lang.Class.FromType(typeof(MainWidget)));
@@ -134,11 +138,28 @@ namespace MindWidgetA.UI
         }
 
         public override void OnReceive(Context context, Intent intent) {
-            RollbarLocator.RollbarInstance.Debug("Widget - on receive: "+intent.ToString());
             base.OnReceive(context, intent);
+            Logger.Debug("Widget - on receive: " + intent.ToString() + " action:" + intent.Action);
             Console.WriteLine("In OnReceive");
             Console.WriteLine(intent.Action, intent.Component);
-            
+
+            if (intent.Action == "Logout")
+            {
+                Logger.Info("Logout");
+                var serviceIntent = new Intent(context.ApplicationContext, typeof(MainBroadcastReceiver));
+                serviceIntent.PutExtra("action", (int)ActionKind.Logout);
+                context.SendBroadcast(serviceIntent);
+                return;
+            }
+
+            if (intent.Action == "Login")
+            {
+                Logger.Info("Login");
+                var serviceIntent = new Intent(context.ApplicationContext, typeof(MainBroadcastReceiver));
+                serviceIntent.PutExtra("action", (int)ActionKind.Login);
+                context.SendBroadcast(serviceIntent);
+                return;
+            }
 
             if (intent.Action.EndsWith("Clicked"))
             {

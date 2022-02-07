@@ -17,6 +17,8 @@ using AndroidX.AppCompat.App;
 using Selftastic_WS_Test.Models.Single;
 using MindWatchA.Models.Single;
 using MindWidgetA.StateMachine;
+using MindWidgetA.UI;
+using MindWatchA.Services;
 
 namespace MindWatchA.UI.Fragments
 {
@@ -40,6 +42,7 @@ namespace MindWatchA.UI.Fragments
         private DateTime nightStopToTime;
         private Button saveButton;
         private Button logoutButton;
+        private Button logsButton;
         private Settings settings;
         private static SettingsFragment instance;
 
@@ -75,6 +78,14 @@ namespace MindWatchA.UI.Fragments
             {
                 weeklyCheckBoxes[i].Checked = settings.GetWeekDayValue(i);
             }
+            logsButton = view.FindViewById<Button>(Resource.Id.logs_button);
+            logsButton.Click += showLogsClicked;
+        }
+
+        protected void showLogsClicked(object sender, EventArgs args)
+        {
+            var intent = new Intent(this.Activity, typeof(ShowLogsActivity));
+            StartActivity(intent);
         }
 
         protected void saveButtonClicked(object sender, EventArgs args)
@@ -91,8 +102,12 @@ namespace MindWatchA.UI.Fragments
         protected void logoutButtonClicked(object sender, EventArgs args)
         {
             User.Remove();
+            var intent = new Intent(Context.ApplicationContext, typeof(MainWidget));
+            intent.PutExtra("action", (int)ActionKind.Logout);
+            intent.SetAction("Logout");
+            Context.SendBroadcast(intent);
             AbstractUI.Instance.InformAboutLogout();
-            Intent intent = new Intent(this.Activity, typeof(LoginActivity));
+            intent = new Intent(this.Activity, typeof(LoginActivity));
             
             StartActivity(intent);
         }

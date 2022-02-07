@@ -1,7 +1,7 @@
 ﻿<resources>
-    <string name="app_name">Mind Widget 1.1.10</string>
+    <string name="app_name">Mind Widget 1.1.12</string>
     <string name="action_settings">Settings</string>
-    <string name="widget_name">Mind Widget 1.1.10</string>
+    <string name="widget_name">Mind Widget 1.1.12</string>
     <string name="terms_of_service_link"><a href="https://selftastic.de/agbs/">Nutzungsbedingungen / AGBs</a></string>
     <string name="privacy_policy_link"><a href="https://selftastic.de/app-datenschutz/">Datenschutzbestimmungen</a></string>
 </resources>

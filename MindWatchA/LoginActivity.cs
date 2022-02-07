@@ -12,6 +12,7 @@ using MindWidgetA.StateMachine;
 using Android.Appwidget;
 using Android.Content;
 using MindWidgetA.UI;
+using MindWatchA.Services;
 
 namespace MindWatchA
 {
@@ -53,15 +54,15 @@ namespace MindWatchA
 
         private void refreshWidget()
         {
-            AbstractUI.Instance.InformAboutLogin();
+            //AbstractUI.Instance.InformAboutLogin();
             AppWidgetManager man = AppWidgetManager.GetInstance(this);
             ComponentName widget = new ComponentName(this, Java.Lang.Class.FromType(typeof(MainWidget)));
             var ids = man.GetAppWidgetIds(widget);
             Console.WriteLine($"{ids}, {ids.Length}");
-            var updateIntent = new Intent();
-            updateIntent.SetAction(AppWidgetManager.ActionAppwidgetUpdate);
-            updateIntent.PutExtra("IDS", ids);
-            updateIntent.PutExtra("DATA", "");
+            var loginIntent = new Intent(this, typeof(MainWidget));
+            loginIntent.SetAction("Login");
+            loginIntent.PutExtra("action", (int) ActionKind.Login);
+            ApplicationContext.SendBroadcast(loginIntent);
         }
 
         private async void loginClicked(object sender, EventArgs args)
@@ -93,7 +94,7 @@ namespace MindWatchA
             user.user_id = userId;
             user.test_mode = testModeCheckBox.Checked;
             user.Persist();
-            AbstractUI.Instance.Login();
+            // AbstractUI.Instance.Login();
             refreshWidget();
             StartActivity(typeof(MainActivity));
         }

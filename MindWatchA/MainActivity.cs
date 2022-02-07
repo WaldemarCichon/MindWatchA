@@ -32,7 +32,7 @@ namespace MindWatchA
         public static Exception Exception { get; set; }
 
         private User user;
-
+        /*
         public FloatingActionButton happyButton;
         public FloatingActionButton neutralButton;
         public FloatingActionButton sadButton;
@@ -47,7 +47,7 @@ namespace MindWatchA
         public Android.Widget.ImageView backButton;
         private Android.Widget.ListView mainListView;
         public FloatingActionButton infoButton;
-
+        */
 
         [Obsolete]
         private void removeStatusBar()
@@ -65,7 +65,7 @@ namespace MindWatchA
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NTU3MjM0QDMxMzkyZTM0MmUzMFlWM0R1bUZyam81K1lEdUxGNkVCVlVBYU1jRUl6N3QxdVlwTjNjZ21uM2c9");// "NTIwMTY3QDMxMzkyZTMzMmUzMFNUQjdXNVY5R3FJRDUrcnpZbDhaRTQxaloyMDZYMy9FL25FcE9uUDI5S2M9");
 
             RollbarLocator.RollbarInstance.Configure(new RollbarConfig("904e61ade59142b5bb6784b35767c269"));
-            RollbarLocator.RollbarInstance.Info("Mindwidget wurde gestartet");
+            Logger.Log(ErrorLevel.Info, "Mindwidget-App wurde gestartet");
             //RollbarHelper.ConfigureRollbarSingleton();
 
             // Registers for global exception handling.
@@ -74,9 +74,10 @@ namespace MindWatchA
             AndroidEnvironment.UnhandledExceptionRaiser += (sender, args) =>
             {
                 var newExc = new ApplicationException("AndroidEnvironment_UnhandledExceptionRaiser", args.Exception);
-                RollbarLocator.RollbarInstance.AsBlockingLogger(TimeSpan.FromSeconds(10)).Critical(newExc);
+                Logger.Log(ErrorLevel.Critical, newExc);
 
                 Exception = newExc;
+
                 StartActivity(typeof(CrashActivity));
             };
 

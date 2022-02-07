@@ -22,6 +22,11 @@ namespace MindWidgetA.Tooling
                     return Good + Neutral + Bad;
                 }
             }
+
+            public void Clear()
+            {
+                Good = Neutral = Bad = 0;
+            }
         }
 
         public class YesNoCounter
@@ -31,6 +36,7 @@ namespace MindWidgetA.Tooling
             public int Later { get; set; }
             public int Total => Yes + No + Later;
             public int TotalWithoutLater => Yes + No;
+            public void Clear() { Yes = No = Later = 0; }
         }
 
         public enum StatisticKind
@@ -239,5 +245,20 @@ namespace MindWidgetA.Tooling
 
         internal static int Points => Global.points;
         internal static List<BadgeClassification> Badges => BadgeCalculation.GetBadges(Global.points);
+
+        internal static void Clear()
+        {
+            foreach (var statistic in All)
+            {
+                var kind = statistic.Kind;
+                string path = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments), kind.ToString() + "Statistics.json");
+                if (File.Exists(path)) {
+                    File.Delete(path);
+                }
+                statistic.GoodBad.Clear();
+                statistic.TaskCounter.Clear();
+                statistic.QuestionCounter.Clear();
+            }
+        }
     }
 }

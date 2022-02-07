@@ -4,6 +4,7 @@ using Android.Appwidget;
 using Android.Content;
 using Android.Runtime;
 using Android.Widget;
+using MindWatchA.Tooling;
 using MindWidgetA;
 using MindWidgetA.StateMachine;
 using MindWidgetA.UI;
@@ -33,10 +34,12 @@ namespace MindWatchA.Services
 
             if (context != instance.Context)
             {
+                Logger.Error("Context does not equals the old one");
                 Console.WriteLine("context does not equals the old one");
             }
             return instance;
         }
+
 
         private ServiceSingleton(Context context)
         {
@@ -50,6 +53,16 @@ namespace MindWatchA.Services
                 var newExc = new ApplicationException("AndroidEnvironment_UnhandledExceptionRaiser", args.Exception);
                 RollbarLocator.RollbarInstance.AsBlockingLogger(TimeSpan.FromSeconds(10)).Critical(newExc);
             };
+        }
+
+        internal void Logout()
+        {
+            Ui.InformAboutLogout();
+        }
+
+        internal void Login()
+        {
+            Ui.InformAboutLogin();
         }
 
         public void ButtonClicked(string buttonAction)

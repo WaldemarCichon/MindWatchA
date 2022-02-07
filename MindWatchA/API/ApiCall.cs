@@ -1,4 +1,5 @@
 ﻿using MindWatchA.Models.Single;
+using MindWatchA.Tooling;
 using Selftastic_WS_Test.Enums;
 using Selftastic_WS_Test.Models;
 using Selftastic_WS_Test.Models.Single;
@@ -103,11 +104,18 @@ namespace Selftastic_WS_Test.API
                 timestamp = DateTime.Now,
                 user = User.Instance.user_id
             };
-            var typeName = typeof(T).Name.ToLower();
-            var answerResult = await httpClient.PostAsJsonAsync("/" + typeName + "/" + position.Id + "/answer", answer).ConfigureAwait(false);
-            Console.WriteLine("Sent: " + typeName + " - " + answerKind);
-            answerResult.EnsureSuccessStatusCode();
-            Console.WriteLine("Sending successfull");
+            try
+            {
+                var typeName = typeof(T).Name.ToLower();
+                var answerResult = await httpClient.PostAsJsonAsync("/" + typeName + "/" + position.Id + "/answer", answer).ConfigureAwait(false);
+                Logger.Info("Sent: " + typeName + " - " + answerKind);
+                answerResult.EnsureSuccessStatusCode();
+            } catch (Exception ex)
+            {
+                Logger.Error(ex);
+                return;
+            }
+            Logger.Info("Answer sent without problems");
         }
 
         internal async Task SendAnswer<T>(T position, AnswerKind answerKind) where T : GenericAPIModel

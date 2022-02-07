@@ -25,7 +25,7 @@
             AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
             {
                 var newExc = new System.Exception("CurrentDomainOnUnhandledException", args.ExceptionObject as System.Exception);
-                RollbarLocator.RollbarInstance.AsBlockingLogger(RollbarTimeout).Critical(newExc);
+                Logger.Log(ErrorLevel.Critical, newExc);
                 MainActivity.Exception = newExc;
                 MainActivity.Instance.StartActivity(typeof(CrashActivity));
             };

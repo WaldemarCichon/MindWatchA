@@ -6,6 +6,7 @@ namespace MindWatchA.Services
         None,
         Startup,
         ButtonClicked,
-
+        Logout,
+        Login,
     }
 }
